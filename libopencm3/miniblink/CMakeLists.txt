@@ -3,12 +3,13 @@ cmake_minimum_required(VERSION 3.15)
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/../../arm.cmake)
 
 project(miniblink VERSION 1.0)
-set(EXECUTABLE ${PROJECT_NAME}.elf)
+set(EXECUTABLE ${PROJECT_NAME})
 set(LINKER_FILE ${CMAKE_SOURCE_DIR}/stm32f103x8.ld)
 
 set(CMAKE_C_STANDARD 99)
 
 add_executable(${EXECUTABLE} miniblink.c)
+target_link_libraries(${EXECUTABLE} opencm3_stm32f1)
 target_compile_options(${EXECUTABLE} PRIVATE
 -Os
 -mthumb
@@ -45,9 +46,11 @@ target_link_options(${EXECUTABLE} PRIVATE
 
 add_custom_command(TARGET ${EXECUTABLE}
 POST_BUILD
-COMMAND ${CMAKE_SIZE_UTIL} ${EXECUTABLE})
+COMMAND ${CMAKE_SIZE} ${EXECUTABLE}.elf
+WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
 
 add_custom_command(TARGET ${EXECUTABLE}
 POST_BUILD
-COMMAND ${CMAKE_OBJCOPY} -Obinary ${EXECUTABLE} ${PROJECT_NAME}.bin)
+COMMAND ${CMAKE_OBJCOPY} -Obinary ${EXECUTABLE}.elf ${PROJECT_NAME}.bin
+WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
 
