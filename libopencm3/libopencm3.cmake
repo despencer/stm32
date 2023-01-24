@@ -1,24 +1,23 @@
-if(NOT DEFINED STM32_FAMILY)
-    message(FATAL_ERROR "STM32_FAMILY is not defined")
+if(STM32_CPU STREQUAL "STM32F103C8T6")
+   set(STM32_C_FLAGS ${STM32_C_FLAGS} -DSTM32F1 -DSTM32F103C8T6 -D_ROM=64K -D_RAM=20K -D_ROM_OFF=0x08000000 -D_RAM_OFF=0x20000000)
+   set(LINKER_FILE ${CMAKE_CURRENT_LIST_DIR}/stm32f103x8.ld)
+   target_link_libraries(${EXECUTABLE} opencm3_stm32f1)
+elseif(STM32_CPU STREQUAL "STM32F411CEU6")
+   set(STM32_C_FLAGS ${STM32_C_FLAGS} -DSTM32F4 -DSTM32F411CEU6 -D_ROM=512K -D_RAM=128K -D_ROM_OFF=0x08000000 -D_RAM_OFF=0x20000000)
+   set(LINKER_FILE ${CMAKE_CURRENT_LIST_DIR}/stm32f411xe.ld)
+   target_link_libraries(${EXECUTABLE} opencm3_stm32f4)
+else()
+   message(FATAL_ERROR "Unknown CPU")
 endif()
-
-set(STM32_C_FLAGS ${STM32_C_FLAGS} -D${STM32_FAMILY})
-
-set(LINKER_FILE ${CMAKE_SOURCE_DIR}/stm32f103x8.ld)
 
 set(CMAKE_C_STANDARD 99)
 
-target_link_libraries(${EXECUTABLE} opencm3_stm32f1)
 target_compile_options(${EXECUTABLE} PRIVATE ${STM32_C_FLAGS})
 
 target_link_options(${EXECUTABLE} PRIVATE
 --static
 -nostartfiles
 -T${LINKER_FILE}
--mthumb
--mcpu=cortex-m3
--msoft-float
--mfix-cortex-m3-ldrd
 -Wl,-Map=${PROJECT_NAME}.map
 -Wl,--gc-sections
 -specs=nosys.specs

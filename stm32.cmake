@@ -19,10 +19,19 @@ set(STM32_C_FLAGS ${STM32_C_FLAGS}
 if(STM32_CPU STREQUAL "STM32F103C8T6")
    set(STM32_FAMILY "STM32F1")
    set(STM32_C_FLAGS ${STM32_C_FLAGS}
--mcpu=cortex-m3
--msoft-float
--mfix-cortex-m3-ldrd
-)
+   -mcpu=cortex-m3
+   -msoft-float
+   -mfix-cortex-m3-ldrd
+   )
+elseif(STM32_CPU STREQUAL "STM32F411CEU6")
+   set(STM32_FAMILY "STM32F4")
+   set(STM32_C_FLAGS ${STM32_C_FLAGS}
+   -mcpu=cortex-m4
+   -mfloat-abi=hard
+   -mfpu=fpv4-sp-d16
+   )
+else()
+   message(FATAL_ERROR "Unknown CPU")
 endif()
 
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/arm.cmake)
