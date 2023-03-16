@@ -12,5 +12,6 @@ add_library(FreeRTOS STATIC
 )
 target_include_directories(FreeRTOS PUBLIC ${RTOS_PATH}/include ${RTOS_PORTABLE_PATH} ${CMAKE_SOURCE_DIR} )
 target_compile_options(FreeRTOS PRIVATE ${STM32_C_FLAGS})
-message(STATUS ${STM32_C_FLAGS})
-target_link_libraries(${EXECUTABLE} FreeRTOS)
+#target_link_libraries(${EXECUTABLE} FreeRTOS '/usr/arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc.a')
+#target_link_libraries(${EXECUTABLE} FreeRTOS)
+target_link_libraries(${EXECUTABLE} -Wl,--whole-archive FreeRTOS -Wl,--no-whole-archive)

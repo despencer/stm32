@@ -22,12 +22,43 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 
+void toggleloop(void);
+
+void setled(void)
+{
+ gpio_clear(GPIOC,GPIO13);
+}
+
+void toggleloop(void)
+{
+// gpio_clear(GPIOC,GPIO13);
+ int i;
+ for (;;)
+      {
+        gpio_toggle(GPIOC,GPIO13);
+        for (i = 0; i < 5000000; i++)	/* Wait a bit. */
+            __asm__("nop"); 
+      }
+
+}
+
+void vApplicationIdleHook(void)
+{
+//  gpio_clear(GPIOC,GPIO13);
+}
+
+extern void vApplicationTickHook(void)
+{
+//  gpio_clear(GPIOC,GPIO13);
+}
+
 static void maintask(void *args __attribute((unused)))
 {
+//  toggleloop();
     for (;;)
       {
         gpio_toggle(GPIOC,GPIO13);
-        vTaskDelay(pdMS_TO_TICKS(500));
+        vTaskDelay(3000);
       }
 }
 
@@ -42,15 +73,19 @@ static void gpio_setup(void)
 #else
     gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO13);
 #endif
+    gpio_set(GPIOC,GPIO13);
 }
 
 int main(void)
 {
     rcc_clock_setup_pll(&rcc_hse_25mhz_3v3[RCC_CLOCK_3V3_96MHZ]);
     gpio_setup();
+//    toggleloop();
 
-    xTaskCreate(maintask, "MAIN", 100, NULL, configMAX_PRIORITIES-1,NULL);
+    xTaskCreate(maintask, "MAIN", 200, NULL, configMAX_PRIORITIES-1,NULL);
+//    setled();
     vTaskStartScheduler();
+    gpio_clear(GPIOC,GPIO13);
 
     for (;;);
     return 0;

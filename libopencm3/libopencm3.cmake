@@ -17,6 +17,9 @@ target_compile_options(${EXECUTABLE} PRIVATE ${STM32_C_FLAGS})
 target_link_options(${EXECUTABLE} PRIVATE
 --static
 -nostartfiles
+#-nostdlib
+-mcpu=cortex-m4
+-mfloat-abi=hard
 -T${LINKER_FILE}
 -Wl,-Map=${PROJECT_NAME}.map
 -Wl,--gc-sections
