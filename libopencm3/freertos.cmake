@@ -4,14 +4,16 @@ set(RTOS_PORTABLE_PATH ${RTOS_PATH}/portable/GCC/${RTOS_PORTABLE})
 
 target_include_directories(${EXECUTABLE} PRIVATE ${RTOS_PATH}/include)
 
-file(GLOB FreeRTOS_src ${RTOS_PATH}/*.c)
 add_library(FreeRTOS STATIC
-    ${FreeRTOS_src}
+    ${RTOS_PATH}/event_groups.c
+    ${RTOS_PATH}/list.c
+    ${RTOS_PATH}/queue.c
+    ${RTOS_PATH}/stream_buffer.c
+    ${RTOS_PATH}/tasks.c
+    ${RTOS_PATH}/timers.c
     ${RTOS_PORTABLE_PATH}/port.c
     ${RTOS_PATH}/portable/MemMang/heap_4.c
 )
-target_include_directories(FreeRTOS PUBLIC ${RTOS_PATH}/include ${RTOS_PORTABLE_PATH} ${CMAKE_SOURCE_DIR} )
+target_include_directories(FreeRTOS PUBLIC ${RTOS_PATH}/include ${RTOS_PORTABLE_PATH} ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_LIST_DIR} )
 target_compile_options(FreeRTOS PRIVATE ${STM32_C_FLAGS})
-#target_link_libraries(${EXECUTABLE} FreeRTOS '/usr/arm-none-eabi/lib/thumb/v7e-m+fp/hard/libc.a')
-#target_link_libraries(${EXECUTABLE} FreeRTOS)
-target_link_libraries(${EXECUTABLE} -Wl,--whole-archive FreeRTOS -Wl,--no-whole-archive)
+target_link_libraries(${EXECUTABLE} FreeRTOS)
