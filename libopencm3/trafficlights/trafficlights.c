@@ -36,6 +36,7 @@ void toggleloop(void)
  for (;;)
       {
         gpio_toggle(GPIOC,GPIO13);
+        gpio_toggle(GPIOC,GPIO3);
         for (i = 0; i < 5000000; i++)	/* Wait a bit. */
             __asm__("nop"); 
       }
@@ -58,7 +59,8 @@ static void maintask(void *args __attribute((unused)))
     for (;;)
       {
         gpio_toggle(GPIOC,GPIO13);
-        vTaskDelay(3000);
+        gpio_toggle(GPIOA,GPIO3);
+        vTaskDelay(1000);
       }
 }
 
@@ -66,14 +68,18 @@ static void gpio_setup(void)
 {
     /* Enable GPIOC clock. */
     rcc_periph_clock_enable(RCC_GPIOC);
+    rcc_periph_clock_enable(RCC_GPIOA);
 
     /* Set GPIO8 (in GPIO port C) to 'output push-pull'. */
 #ifdef STM32F1
     gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO13);
+    gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO3);
 #else
     gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO13);
+    gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO3);
 #endif
     gpio_set(GPIOC,GPIO13);
+    gpio_set(GPIOA,GPIO3);
 }
 
 int main(void)
