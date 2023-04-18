@@ -56,3 +56,6 @@ build
 
 #FreeCad backups
 *.FCStd1
+
+#Kicad backups
+*-backups
