@@ -22,6 +22,8 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 
+#include "trafficlights.h"
+
 void toggleloop(void);
 
 void setled(void)
