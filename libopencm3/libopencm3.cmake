@@ -15,15 +15,9 @@ set(CMAKE_C_STANDARD 99)
 target_compile_options(${EXECUTABLE} PRIVATE ${STM32_C_FLAGS})
 target_include_directories(${EXECUTABLE} PRIVATE ${CMAKE_CURRENT_LIST_DIR})
 
-target_link_options(${EXECUTABLE} PRIVATE
-  --static
-  -nostartfiles
-  ${STM32_LINK_FLAGS}
+target_link_options(${EXECUTABLE} PRIVATE ${STM32_LINK_FLAGS}
   -T${LINKER_FILE}
   -Wl,-Map=${PROJECT_NAME}.map
-  -Wl,--gc-sections
-  -specs=nosys.specs
-  -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group
   )
 
 add_custom_command(TARGET ${EXECUTABLE}

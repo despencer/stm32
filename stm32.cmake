@@ -9,12 +9,20 @@ if(NOT DEFINED STM32_CPU)
 endif()
 
 set(STM32_C_FLAGS ${STM32_C_FLAGS}
-   -Os  # size optimization
-   -mthumb  # 16-bit Thumb instruction set
-   -Wextra -Wshadow -Wimplicit-function-declaration -Wredundant-decls -Wmissing-prototypes -Wstrict-prototypes -Wall -Wundef  # warnings
-   -fno-common   # a way of treating uninitialized variables (put them to BSS)
-   -ffunction-sections -fdata-sections  # put each function and data item into its own section
-)
+  -Os  # size optimization
+  -mthumb  # 16-bit Thumb instruction set
+  -Wextra -Wshadow -Wimplicit-function-declaration -Wredundant-decls -Wmissing-prototypes -Wstrict-prototypes -Wall -Wundef  # warnings
+  -fno-common   # a way of treating uninitialized variables (put them to BSS)
+  -ffunction-sections -fdata-sections  # put each function and data item into its own section
+  )
+
+set(STM32_LINK_FLAGS ${STM32_LINK_FLAGS}
+  --static
+  -nostartfiles
+  -Wl,--gc-sections
+  -specs=nosys.specs
+  -Wl,--start-group -lc -lgcc -lnosys -Wl,--end-group
+  )
 
 if(STM32_CPU STREQUAL "STM32F103C8T6")
    set(STM32_FAMILY "STM32F1")
