@@ -26,10 +26,14 @@ if(STM32_CPU STREQUAL "STM32F103C8T6")
 elseif(STM32_CPU STREQUAL "STM32F411CEU6")
    set(STM32_FAMILY "STM32F4")
    set(STM32_C_FLAGS ${STM32_C_FLAGS}
-   -mcpu=cortex-m4
-   -mfloat-abi=hard
-   -mfpu=fpv4-sp-d16
-   )
+     -mcpu=cortex-m4
+     -mfloat-abi=hard
+     -mfpu=fpv4-sp-d16
+     )
+   set(STM32_LINK_FLAGS ${STM32_LINK_FLAGS}
+     -mcpu=cortex-m4
+     -mfloat-abi=hard
+     )
 else()
    message(FATAL_ERROR "Unknown CPU")
 endif()
