@@ -1,5 +1,9 @@
 set(RTOS_PATH $ENV{HOME}/.local/lib/freertos)
-set(RTOS_PORTABLE ARM_CM4F)
+if(STM32_CPU STREQUAL "STM32F411CEU6")
+   set(RTOS_PORTABLE ARM_CM4F)
+else()
+   message(FATAL_ERROR "Unknown CPU for FreeRTOS")
+endif()
 set(RTOS_PORTABLE_PATH ${RTOS_PATH}/portable/GCC/${RTOS_PORTABLE})
 
 target_include_directories(${EXECUTABLE} PRIVATE ${RTOS_PATH}/include)
