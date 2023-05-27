@@ -50,7 +50,7 @@
 #define configUSE_IDLE_HOOK		1
 #define configUSE_TICK_HOOK		1
 // #define configCPU_CLOCK_HZ				( SystemCoreClock )
-#define configCPU_CLOCK_HZ				( (unsigned long) 96000000 )
+#define configCPU_CLOCK_HZ				( (unsigned long) STM32_CLOCK )
 #define configTICK_RATE_HZ				( ( TickType_t ) 1000 )
 #define configMAX_PRIORITIES			( 5 )
 #define configMINIMAL_STACK_SIZE		( ( unsigned short ) 130 )
