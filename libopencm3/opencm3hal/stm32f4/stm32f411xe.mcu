@@ -2,4 +2,4 @@ general:
    clock:
       - frequency: 96000000
         external: 25000000
-        hal: "rcc_clock_setup_pll(&rcc_hse_25mhz_3v3[RCC_CLOCK_3V3_96MHZ])"
+        hal: "rcc_clock_setup_pll(&rcc_hse_25mhz_3v3[RCC_CLOCK_3V3_96MHZ]);"
