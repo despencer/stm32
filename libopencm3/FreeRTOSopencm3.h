@@ -28,6 +28,8 @@
 #ifndef FREERTOS_CONFIG_OPENCM3_H
 #define FREERTOS_CONFIG_OPENCM3_H
 
+#include "opencm3hal.h"
+
 /*-----------------------------------------------------------
  * Application specific definitions.
  *

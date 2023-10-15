@@ -88,6 +88,7 @@ static void gpio_setup(void)
 int main(void)
 {
    hal_setup_clock();
+//   hal_enable_port();
     gpio_setup();
 //    toggleloop();
 
