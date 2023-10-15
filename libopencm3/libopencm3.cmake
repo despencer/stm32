@@ -26,9 +26,12 @@ if(NOT DEFINED BOARD)
 endif()
 
 add_custom_command(
-    OUTPUT opencm3hal.c
+    OUTPUT opencm3hal.c opencm3hal.h
     COMMAND ${Python_EXECUTABLE} ${OPENCM3HAL_SRC}/makehal.py ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${BOARD}
-    DEPENDS ${OPENCM3HAL_SRC}/makehal.py ${OPENCM3HAL_SRC}/opencm3hal.c.jinja ${OPENCM3HAL_SRC}/opencm3hal.h.jinja)
+    DEPENDS ${OPENCM3HAL_SRC}/makehal.py ${OPENCM3HAL_SRC}/opencm3hal.c.jinja ${OPENCM3HAL_SRC}/opencm3hal.h.jinja
+    COMMENT "Generating HAL")
+add_custom_target(mcu_hal DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/opencm3hal.h)
+add_dependencies(${EXECUTABLE} mcu_hal)
 
 target_compile_options(${EXECUTABLE} PRIVATE ${STM32_C_FLAGS})
 target_include_directories(${EXECUTABLE} PRIVATE ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_LIST_DIR}/opencm3hal)

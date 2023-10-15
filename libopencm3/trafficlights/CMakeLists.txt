@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.20)
 include(${CMAKE_SOURCE_DIR}/../../stm32.cmake)
 
 project(trafficlights VERSION 1.0)
