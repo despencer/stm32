@@ -2,7 +2,20 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 
+void hal_init(void)
+{
+ hal_setup_clock();
+}
+
 void hal_setup_clock(void)
 {
  {{ options.hal.clock }}
+}
+
+void hal_gpio_open(uint32_t port, uint32_t pin, uint32_t mode)
+{
+ {% if options.mcu.family == 'stm32f4' -%}
+ rcc_periph_clock_enable(HAL_GPIO_RCC_PORT(port));
+ gpio_mode_setup(port, (mode) >> HAL_GPIO_MODE_DEFSHIFT, (mode) & HAL_GPIO_MODE_MASK, pin);
+{% endif -%}
 }

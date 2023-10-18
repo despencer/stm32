@@ -25,77 +25,41 @@
 
 #include "trafficlights.h"
 
-void toggleloop(void);
-
-void setled(void)
-{
- gpio_clear(GPIOC,GPIO13);
-}
-
-void toggleloop(void)
-{
-// gpio_clear(GPIOC,GPIO13);
- int i;
- for (;;)
-      {
-        gpio_toggle(GPIOC,GPIO13);
-        gpio_toggle(GPIOC,GPIO3);
-        for (i = 0; i < 5000000; i++)	/* Wait a bit. */
-            __asm__("nop"); 
-      }
-
-}
-
-void vApplicationIdleHook(void)
-{
-//  gpio_clear(GPIOC,GPIO13);
-}
-
-extern void vApplicationTickHook(void)
-{
-//  gpio_clear(GPIOC,GPIO13);
-}
-
 static void maintask(void *args __attribute((unused)))
 {
-//  toggleloop();
-    for (;;)
-      {
-        gpio_toggle(GPIOC,GPIO13);
-        gpio_toggle(GPIOA,GPIO3);
+ for (;;)
+  {
+    int i;
+
+    hal_gpio_set(TL_RED_PORT, TL_RED_PIN);
+    vTaskDelay(3000);
+    hal_gpio_set(TL_YELLOW_PORT, TL_YELLOW_PIN);
+    vTaskDelay(1000);
+    hal_gpio_clear(TL_RED_PORT, TL_RED_PIN);
+    hal_gpio_clear(TL_YELLOW_PORT, TL_YELLOW_PIN);
+    hal_gpio_set(TL_GREEN_PORT, TL_GREEN_PIN);
+    vTaskDelay(3000);
+    for(i=0; i<5; i++)
+        {
+        gpio_toggle(TL_GREEN_PORT, TL_GREEN_PIN);
         vTaskDelay(1000);
-      }
-}
-
-static void gpio_setup(void)
-{
-    /* Enable GPIOC clock. */
-    rcc_periph_clock_enable(RCC_GPIOC);
-    rcc_periph_clock_enable(RCC_GPIOA);
-
-    /* Set GPIO8 (in GPIO port C) to 'output push-pull'. */
-#ifdef STM32F1
-    gpio_set_mode(GPIOC, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO13);
-    gpio_set_mode(GPIOA, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, GPIO3);
-#else
-    gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO13);
-    gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO3);
-#endif
-    gpio_set(GPIOC,GPIO13);
-    gpio_set(GPIOA,GPIO3);
+        }
+    hal_gpio_set(TL_YELLOW_PORT, TL_YELLOW_PIN);
+    vTaskDelay(1000);
+    hal_gpio_clear(TL_YELLOW_PORT, TL_YELLOW_PIN);
+  }
 }
 
 int main(void)
 {
-   hal_setup_clock();
-//   hal_enable_port();
-    gpio_setup();
-//    toggleloop();
+   hal_init();
+
+   hal_gpio_open(TL_RED_PORT, TL_RED_PIN, HAL_GPIO_MODE_OUTPUT | HAL_GPIO_PUPD_NONE);
+   hal_gpio_open(TL_YELLOW_PORT, TL_YELLOW_PIN, HAL_GPIO_MODE_OUTPUT | HAL_GPIO_PUPD_NONE);
+   hal_gpio_open(TL_GREEN_PORT, TL_GREEN_PIN, HAL_GPIO_MODE_OUTPUT | HAL_GPIO_PUPD_NONE);
 
     xTaskCreate(maintask, "MAIN", 200, NULL, configMAX_PRIORITIES-1,NULL);
-//    setled();
     vTaskStartScheduler();
-    gpio_clear(GPIOC,GPIO13);
 
     for (;;);
     return 0;

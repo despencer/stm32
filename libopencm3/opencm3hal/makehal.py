@@ -26,6 +26,7 @@ def getoptions(srcdir, boardfile):
         jcpu = yaml.load(fcpu, Loader=yaml.Loader)
     opt = Options()
     opt.mcu = Options()
+    opt.mcu.family = jboard['cpu']['family']
     opt.hal = Options()
     getfrequency(opt, jboard, jcpu)
     return opt
