@@ -12,10 +12,32 @@ void hal_setup_clock(void)
  {{ options.hal.clock }}
 }
 
+const hal_port_properties_t hal_port_properties[HAL_GPIO_PORT_NUM] = {
+    { .dev_port = GPIOA, .rcc_port = RCC_GPIOA },
+    { .dev_port = GPIOB, .rcc_port = RCC_GPIOB },
+    { .dev_port = GPIOC, .rcc_port = RCC_GPIOC }, 
+    };
+
 void hal_gpio_open(uint32_t port, uint32_t pin, uint32_t mode)
 {
  {% if options.mcu.family == 'stm32f4' -%}
- rcc_periph_clock_enable(HAL_GPIO_RCC_PORT(port));
- gpio_mode_setup(port, (mode) >> HAL_GPIO_MODE_DEFSHIFT, (mode) & HAL_GPIO_MODE_MASK, pin);
+ rcc_periph_clock_enable(hal_port_properties[port].rcc_port);
+ gpio_mode_setup(hal_port_properties[port].dev_port, (mode) >> HAL_GPIO_MODE_DEFSHIFT, (mode) & HAL_GPIO_MODE_MASK, pin);
 {% endif -%}
 }
+
+void hal_gpio_set(uint32_t port, uint32_t pin)
+{
+ gpio_set(hal_port_properties[port].dev_port, pin);
+}
+
+void hal_gpio_clear(uint32_t port, uint32_t pin)
+{
+ gpio_clear(hal_port_properties[port].dev_port, pin);
+}
+
+void hal_gpio_toggle(uint32_t port, uint32_t pin)
+{
+ gpio_toggle(hal_port_properties[port].dev_port, pin);
+}
+

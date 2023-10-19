@@ -41,8 +41,8 @@ static void maintask(void *args __attribute((unused)))
     vTaskDelay(3000);
     for(i=0; i<5; i++)
         {
-        gpio_toggle(TL_GREEN_PORT, TL_GREEN_PIN);
-        vTaskDelay(1000);
+        hal_gpio_toggle(TL_GREEN_PORT, TL_GREEN_PIN);
+        vTaskDelay(750);
         }
     hal_gpio_set(TL_YELLOW_PORT, TL_YELLOW_PIN);
     vTaskDelay(1000);

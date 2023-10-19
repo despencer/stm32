@@ -8,9 +8,17 @@
 void hal_init(void);
 void hal_setup_clock(void);
 
-#define HAL_GPIO_PORTA GPIOA
-#define HAL_GPIO_PORTB GPIOB
-#define HAL_GPIO_PORTC GPIOC
+#define HAL_GPIO_PORTA 0
+#define HAL_GPIO_PORTB 1
+#define HAL_GPIO_PORTC 2
+#define HAL_GPIO_PORT_NUM 3
+
+typedef struct hal_port_properties_s {
+   uint32_t dev_port;
+   uint32_t rcc_port;
+} hal_port_properties_t;
+
+extern const hal_port_properties_t hal_port_properties[HAL_GPIO_PORT_NUM];
 
 #define HAL_GPIO_PIN0 GPIO0
 #define HAL_GPIO_PIN1 GPIO1
@@ -42,13 +50,11 @@ void hal_setup_clock(void);
 #define HAL_GPIO_PUPD_PULLUP    GPIO_PUPD_PULLUP
 #define HAL_GPIO_PUPD_PULLDOWN  GPIO_PUPD_PULLDOWN
 
-#define HAL_GPIO_RCC_PORT(x) ((x)-(HAL_GPIO_PORTA)+(RCC_GPIOA))
-
 {% endif %}
 
 void hal_gpio_open(uint32_t port, uint32_t pin, uint32_t mode);
-#define hal_gpio_set gpio_set
-#define hal_gpio_clear gpio_clear
-#define hal_gpio_toggle gpio_toggle
+void hal_gpio_set(uint32_t port, uint32_t pin);
+void hal_gpio_clear(uint32_t port, uint32_t pin);
+void hal_gpio_toggle(uint32_t port, uint32_t pin);
 
 #endif
