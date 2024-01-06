@@ -20,6 +20,11 @@ execute_process(COMMAND ${Python_EXECUTABLE} -c "import jinja2" RESULT_VARIABLE 
 if(NOT RET EQUAL 0)
     message(FATAL_ERROR "Missing jinja2")
 endif()
+execute_process(COMMAND ${Python_EXECUTABLE} -c "import yaml" RESULT_VARIABLE RET)
+if(NOT RET EQUAL 0)
+    message(FATAL_ERROR "Missing yaml")
+endif()
+
 
 if(NOT DEFINED BOARD)
    message(FATAL_ERROR "Board is not defined!")
