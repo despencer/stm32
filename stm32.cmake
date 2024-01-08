@@ -1,3 +1,7 @@
+if(NOT DEFINED BOARD)
+    message(FATAL_ERROR "BOARD is not defined")
+endif()
+
 set(STM32_BOARD ${BOARD})
 if(STM32_BOARD STREQUAL "BluePill")
     set(STM32_CPU "STM32F103C8T6")
