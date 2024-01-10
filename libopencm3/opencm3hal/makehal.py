@@ -19,10 +19,10 @@ def getfrequency(opt, jboard, jcpu):
     sys.stderr.write("Frequency not found\n")
     exit(2)
 
-def getoptions(srcdir, boardfile):
-    with open("{0}{1}/{2}.board".format(srcdir, boards, boardfile)) as fboard:
+def getoptions(haldir, boardfile):
+    with open("{0}{1}/{2}.board".format(haldir, boards, boardfile)) as fboard:
         jboard = yaml.load(fboard, Loader=yaml.Loader)['board']
-    with open("{0}{1}/{2}/{3}.mcu".format(srcdir, hal, jboard['cpu']['family'], jboard['cpu']['options'])) as fcpu:
+    with open("{0}{1}/{2}/{3}.mcu".format(haldir, hal, jboard['cpu']['family'], jboard['cpu']['options'])) as fcpu:
         jcpu = yaml.load(fcpu, Loader=yaml.Loader)
     opt = Options()
     opt.mcu = Options()
@@ -33,15 +33,16 @@ def getoptions(srcdir, boardfile):
 
 def main():
     parser = argparse.ArgumentParser(description='Generates HAL file')
-    parser.add_argument('srcdir', help='source dir')
+    parser.add_argument('cfgdir', help='config dir')
+    parser.add_argument('haldir', help='hal dir')
     parser.add_argument('dstdir', help='destination dir')
-    parser.add_argument('board', help='board yaml')
+    parser.add_argument('board', help='board name')
     args = parser.parse_args()
 
-    options = getoptions(args.srcdir, args.board)
+    options = getoptions(args.haldir, args.board)
     if options == None:
         return 1
-    env = jinja2.Environment(loader=jinja2.FileSystemLoader(args.srcdir + hal))
+    env = jinja2.Environment(loader=jinja2.FileSystemLoader(args.haldir + hal))
     for tmpl in templates:
         with open(args.dstdir + '/' + tmpl, mode='w') as target:
             target.write(env.get_template(tmpl+'.jinja').render(options=options))

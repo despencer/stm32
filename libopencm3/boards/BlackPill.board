@@ -5,3 +5,44 @@ board:
       model: stm32f411ceu6
       family: stm32f4
       options: stm32f411xe
+      usart:
+          - no: 1
+            tx: [ pa9, pa15, pb6 ]
+            rx: [ pa10, pb3, pb7 ]
+          - no: 2
+            tx: [ pa2, pd5 ]
+            rx: [ pa3, pd5 ]
+          - no: 6
+            tx: [ pa11, pc6 ]
+            rx: [ pa12, pc7 ]
+      pins:
+          - name: pa2
+            tolerant5v: yes
+          - name: pa3
+            tolerant5v: yes
+          - name: pa9
+            tolerant5v: yes
+          - name: pa10
+            tolerant5v: yes
+          - name: pa11
+            tolerant5v: yes
+          - name: pa12
+            tolerant5v: yes
+          - name: pa15
+            tolerant5v: yes
+          - name: pb3
+            tolerant5v: yes
+          - name: pb6
+            tolerant5v: yes
+          - name: pb7
+            tolerant5v: yes
+          - name: pc6
+            tolerant5v: yes
+          - name: pc7
+            tolerant5v: yes
+          - name: pd5
+            tolerant5v: yes
+          - name: pd6
+            tolerant5v: yes
+
+
