@@ -51,8 +51,11 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+#Python files
+__pycache__/
+
 #Build directories
-build
+build/
 
 #FreeCad backups
 *.FCStd1
