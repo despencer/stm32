@@ -16,11 +16,15 @@ def main():
     options = config.getoptions(args.haldir, args.board)
     if options == None:
         return 1
-    cfg = config.readconfig(args.cfgdir, options)
+    cfg = config.getconfig(args.cfgdir, options)
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(args.haldir + config.hal))
     for tmpl in templates:
         with open(args.dstdir + '/' + tmpl, mode='w') as target:
             target.write(env.get_template(tmpl+'.jinja').render(options=options))
+    for mapper in cfg.mappers:
+        for tmpl in mapper.templates:
+            with open(args.dstdir + '/' + tmpl, mode='w') as target:
+               target.write(env.get_template(tmpl+'.jinja').render(options=mapper))
     return 0
 
 if __name__ == "__main__":

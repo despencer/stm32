@@ -1,0 +1,4 @@
+void hal_output_set(output_t* port)
+{
+ gpio_set(port->dev_port, port->pin);
+}

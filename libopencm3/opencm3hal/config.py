@@ -50,3 +50,7 @@ def readconfig(cfgdir, options):
         if mapper not in cfg.mappers:
             cfg.mappers.append(mapper)
     return cfg
+
+def getconfig(cfgdir, options):
+    cfg = readconfig(cfgdir, options)
+    return cfg

@@ -15,6 +15,7 @@ endif()
 
 set(CMAKE_C_STANDARD 99)
 
+# checking Python and required modules
 find_package(Python REQUIRED)
 execute_process(COMMAND ${Python_EXECUTABLE} -c "import jinja2" RESULT_VARIABLE RET)
 if(NOT RET EQUAL 0)
@@ -25,15 +26,28 @@ if(NOT RET EQUAL 0)
     message(FATAL_ERROR "Missing yaml")
 endif()
 
-
 if(NOT DEFINED BOARD)
-   message(FATAL_ERROR "Board is not defined!")
+   message(FATAL_ERROR "Board is not defined")
+endif()
+
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${OPENCM3HAL_SRC}/makedeps.py)
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/board.config)
+
+# getting list of generated files
+execute_process(COMMAND ${Python_EXECUTABLE} ${OPENCM3HAL_SRC}/makedeps.py ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_LIST_DIR} ${BOARD}
+    OUTPUT_VARIABLE DEPENDENCIES
+    RESULT_VARIABLE RETURN_VALUE)
+if(NOT RETURN_VALUE EQUAL 0)
+   message(FATAL_ERROR "Failed to generate dependecies")
 endif()
 
 add_custom_command(
     OUTPUT opencm3hal.c opencm3hal.h
     COMMAND ${Python_EXECUTABLE} ${OPENCM3HAL_SRC}/makehal.py ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${BOARD}
-    DEPENDS ${OPENCM3HAL_SRC}/makehal.py ${CMAKE_SOURCE_DIR}/board.config ${OPENCM3HAL_SRC}/opencm3hal.c.jinja ${OPENCM3HAL_SRC}/opencm3hal.h.jinja
+    DEPENDS ${OPENCM3HAL_SRC}/makehal.py ${OPENCM3HAL_SRC}/makedeps.py ${OPENCM3HAL_SRC}/config.py
+            ${CMAKE_SOURCE_DIR}/board.config ${OPENCM3HAL_SRC}/opencm3hal.c.jinja ${OPENCM3HAL_SRC}/opencm3hal.h.jinja
+            ${DEPENDENCIES}
+            ${OPENCM3HAL_SRC}/output.py
     COMMENT "Generating HAL")
 add_custom_target(mcu_hal DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/opencm3hal.h)
 add_dependencies(${EXECUTABLE} mcu_hal)
