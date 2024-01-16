@@ -45,7 +45,8 @@ add_custom_command(
     OUTPUT opencm3hal.c opencm3hal.h
     COMMAND ${Python_EXECUTABLE} ${OPENCM3HAL_SRC}/makehal.py ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${BOARD}
     DEPENDS ${OPENCM3HAL_SRC}/makehal.py ${OPENCM3HAL_SRC}/makedeps.py ${OPENCM3HAL_SRC}/config.py
-            ${CMAKE_SOURCE_DIR}/board.config ${OPENCM3HAL_SRC}/opencm3hal.c.jinja ${OPENCM3HAL_SRC}/opencm3hal.h.jinja
+            ${CMAKE_SOURCE_DIR}/board.config
+            ${OPENCM3HAL_SRC}/opencm3hal.c.jinja ${OPENCM3HAL_SRC}/opencm3res.c.jinja ${OPENCM3HAL_SRC}/opencm3hal.h.jinja
             ${DEPENDENCIES}
             ${OPENCM3HAL_SRC}/output.py
     COMMENT "Generating HAL")
@@ -53,8 +54,8 @@ add_custom_target(mcu_hal DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/opencm3hal.h)
 add_dependencies(${EXECUTABLE} mcu_hal)
 
 target_compile_options(${EXECUTABLE} PRIVATE ${STM32_C_FLAGS})
-target_include_directories(${EXECUTABLE} PRIVATE ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_LIST_DIR}/opencm3hal)
-target_sources(${EXECUTABLE} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/opencm3hal.c)
+target_include_directories(${EXECUTABLE} PRIVATE ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_LIST_DIR}/opencm3hal)
+target_sources(${EXECUTABLE} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/opencm3hal.c ${CMAKE_CURRENT_BINARY_DIR}/opencm3res.c)
 
 target_link_options(${EXECUTABLE} PRIVATE ${STM32_LINK_FLAGS}
   -T${LINKER_FILE}

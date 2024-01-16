@@ -1,0 +1,10 @@
+#ifndef OPENCM3_HAL_OUTPUTRES_H
+#define OPENCM3_HAL_OUTPUTRES_H
+
+#include "opencm3output.h"
+
+{% for port in config.ports -%}
+extern hal_port_t {{port.reference}};
+{% endfor %}
+
+#endif

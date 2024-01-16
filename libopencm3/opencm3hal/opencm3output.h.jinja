@@ -1,0 +1,16 @@
+#ifndef OPENCM3_HAL_OUTPUT_H
+#define OPENCM3_HAL_OUTPUT_H
+
+#include <stdint.h>
+
+typedef struct hal_port_s {
+   uint32_t dev_port;
+   uint32_t pin;
+} hal_port_t;
+
+void hal_outputs_init(void);
+void hal_output_set(hal_port_t* port);
+void hal_output_clear(hal_port_t* port);
+void hal_output_toggle(hal_port_t* port);
+
+#endif

@@ -3,7 +3,7 @@ import argparse
 import sys
 import config
 
-templates = [ "opencm3hal.h", "opencm3hal.c" ]
+templates = [ "opencm3hal.h", "opencm3hal.c", "opencm3res.c" ]
 
 def main():
     parser = argparse.ArgumentParser(description='Generates HAL file')
@@ -24,7 +24,7 @@ def main():
     for mapper in cfg.mappers:
         for tmpl in mapper.templates:
             with open(args.dstdir + '/' + tmpl, mode='w') as target:
-               target.write(env.get_template(tmpl+'.jinja').render(options=mapper))
+               target.write(env.get_template(tmpl+'.jinja').render(config=mapper))
     return 0
 
 if __name__ == "__main__":

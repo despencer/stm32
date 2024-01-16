@@ -28,6 +28,8 @@ def getoptions(haldir, boardfile):
     opt.mcu = Options()
     opt.mcu.family = jboard['cpu']['family']
     opt.hal = Options()
+    opt.hal.resources = []
+    opt.hal.resheaders = []
     getfrequency(opt, jboard, jcpu)
     return opt
 

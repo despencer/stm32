@@ -1,60 +1,12 @@
 #ifndef OPENCM3_HAL_H
 #define OPENCM3_HAL_H
 
-#include <libopencm3/stm32/rcc.h>
+{% for res in options.hal.resheaders -%}
+#include "{{res}}"
+{% endfor %}
 
 #define STM32_CLOCK {{ options.mcu.frequency }}
 
 void hal_init(void);
-void hal_setup_clock(void);
-
-#define HAL_GPIO_PORTA 0
-#define HAL_GPIO_PORTB 1
-#define HAL_GPIO_PORTC 2
-#define HAL_GPIO_PORT_NUM 3
-
-typedef struct hal_port_properties_s {
-   uint32_t dev_port;
-   uint32_t rcc_port;
-} hal_port_properties_t;
-
-extern const hal_port_properties_t hal_port_properties[HAL_GPIO_PORT_NUM];
-
-#define HAL_GPIO_PIN0 GPIO0
-#define HAL_GPIO_PIN1 GPIO1
-#define HAL_GPIO_PIN2 GPIO2
-#define HAL_GPIO_PIN3 GPIO3
-#define HAL_GPIO_PIN4 GPIO4
-#define HAL_GPIO_PIN5 GPIO5
-#define HAL_GPIO_PIN6 GPIO6
-#define HAL_GPIO_PIN7 GPIO7
-#define HAL_GPIO_PIN8 GPIO8
-#define HAL_GPIO_PIN9 GPIO9
-#define HAL_GPIO_PIN10 GPIO10
-#define HAL_GPIO_PIN11 GPIO11
-#define HAL_GPIO_PIN12 GPIO12
-#define HAL_GPIO_PIN13 GPIO13
-#define HAL_GPIO_PIN14 GPIO14
-#define HAL_GPIO_PIN15 GPIO15
-
-{% if options.mcu.family == 'stm32f4' %}
-
-#define HAL_GPIO_MODE_DEFSHIFT 8
-#define HAL_GPIO_MODE_MASK 0x0F
-#define HAL_GPIO_MODE_INPUT     ((GPIO_MODE_INPUT) << HAL_GPIO_MODE_DEFSHIFT)
-#define HAL_GPIO_MODE_OUTPUT    ((GPIO_MODE_OUTPUT) << HAL_GPIO_MODE_DEFSHIFT)
-#define HAL_GPIO_MODE_AF        ((GPIO_MODE_AF) << HAL_GPIO_MODE_DEFSHIFT)
-#define HAL_GPIO_MODE_ANALOG    ((GPIO_MODE_ANALOG) << HAL_GPIO_MODE_DEFSHIFT)
-
-#define HAL_GPIO_PUPD_NONE      GPIO_PUPD_NONE
-#define HAL_GPIO_PUPD_PULLUP    GPIO_PUPD_PULLUP
-#define HAL_GPIO_PUPD_PULLDOWN  GPIO_PUPD_PULLDOWN
-
-{% endif %}
-
-void hal_gpio_open(uint32_t port, uint32_t pin, uint32_t mode);
-void hal_gpio_set(uint32_t port, uint32_t pin);
-void hal_gpio_clear(uint32_t port, uint32_t pin);
-void hal_gpio_toggle(uint32_t port, uint32_t pin);
 
 #endif
