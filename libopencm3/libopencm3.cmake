@@ -42,7 +42,7 @@ if(NOT RETURN_VALUE EQUAL 0)
 endif()
 
 add_custom_command(
-    OUTPUT opencm3hal.c opencm3hal.h
+    OUTPUT opencm3hal.c opencm3res.c opencm3hal.h
     COMMAND ${Python_EXECUTABLE} ${OPENCM3HAL_SRC}/makehal.py ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${BOARD}
     DEPENDS ${OPENCM3HAL_SRC}/makehal.py ${OPENCM3HAL_SRC}/makedeps.py ${OPENCM3HAL_SRC}/config.py
             ${CMAKE_SOURCE_DIR}/board.config

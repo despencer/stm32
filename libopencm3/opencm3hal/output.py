@@ -13,5 +13,7 @@ class Mapper:
         p.name = jmap['port']
         p.pin = jmap['pin']
         self.ports.append(p)
-        board.hal.resheaders.append("opencm3outputres.h")
-        board.hal.resources.append("opencm3output.c")
+        if "opencm3outputres.h" not in board.hal.resheaders:
+            board.hal.resheaders.append("opencm3outputres.h")
+        if "opencm3output.c" not in board.hal.resources:
+            board.hal.resources.append("opencm3output.c")
