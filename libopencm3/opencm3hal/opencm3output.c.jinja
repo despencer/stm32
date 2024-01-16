@@ -12,6 +12,7 @@ void hal_outputs_init(void)
 {
 {% for port in config.ports -%}
   {{port.reference}}.dev_port = GPIO{{port.name}};
+  {{port.reference}}.rcc_port = RCC_GPIO{{port.name}};
   {{port.reference}}.pin = GPIO{{port.pin}};
   hal_output_open(&{{port.reference}});
 {% endfor -%}
@@ -19,7 +20,7 @@ void hal_outputs_init(void)
 
 void hal_output_open(hal_port_t* port)
 {
- rcc_periph_clock_enable(port->dev_port);
+ rcc_periph_clock_enable(port->rcc_port);
  {% if config.board.mcu.family == 'stm32f1' -%}
    gpio_set_mode(port->dev_port, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_OUTPUT_PUSHPULL, port->pin);
  {% else -%}

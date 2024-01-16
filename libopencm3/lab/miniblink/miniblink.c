@@ -13,7 +13,7 @@ int main(void)
       blink(true); blink(true); blink(true);
       blink(false); blink(false); blink(false);
       blink(true); blink(true); blink(true);
-      for (i = 0; i < 3000000; i++)	
+      for (i = 0; i < 10000000; i++)	
              __asm__("nop");
     }
 
@@ -25,13 +25,13 @@ void blink(bool length)
   int i;
   int wait;
 
-  wait = length?2500000:50000;
+  wait = length?10000000:200000;
 
   hal_output_clear(&indicator);
   for (i = 0; i < wait; i++)
      __asm__("nop");
 
   hal_output_set(&indicator);
-  for (i = 0; i < 500000; i++)
+  for (i = 0; i < 2000000; i++)
      __asm__("nop"); 
 }

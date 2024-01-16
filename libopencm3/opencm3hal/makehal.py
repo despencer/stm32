@@ -20,7 +20,7 @@ def main():
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(args.haldir + config.hal))
     for tmpl in templates:
         with open(args.dstdir + '/' + tmpl, mode='w') as target:
-            target.write(env.get_template(tmpl+'.jinja').render(options=options))
+            target.write(env.get_template(tmpl+'.jinja').render(options=options, config=cfg))
     for mapper in cfg.mappers:
         for tmpl in mapper.templates:
             with open(args.dstdir + '/' + tmpl, mode='w') as target:

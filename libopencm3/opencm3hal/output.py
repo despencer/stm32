@@ -2,6 +2,7 @@ import port
 
 class Mapper:
     def __init__(self):
+        self.name = 'output'
         self.ports = []
         self.templates = [ "opencm3output.c", "opencm3output.h", "opencm3outputres.h" ]
 
