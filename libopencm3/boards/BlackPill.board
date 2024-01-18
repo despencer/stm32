@@ -18,6 +18,12 @@ board:
       pins:
           - name: pa2
             tolerant5v: yes
+            altfuncs:
+               - index: 7
+                 function:
+                      type: usart
+                      index: 2
+                      signal: tx
           - name: pa3
             tolerant5v: yes
           - name: pa9
