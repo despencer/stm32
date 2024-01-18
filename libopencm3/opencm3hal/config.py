@@ -1,9 +1,10 @@
 import sys
 import yaml
 import output
+import usart
 
 hal = "/opencm3hal"
-mappers = { 'output':output.Mapper() }
+mappers = { 'output':output.Mapper(), 'usart':usart.Mapper() }
 boards = "/boards"
 
 class Options:
