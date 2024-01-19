@@ -1,0 +1,15 @@
+#ifndef OPENCM3_HAL_USART_H
+#define OPENCM3_HAL_USART_H
+
+#include <stddef.h>
+#include "opencm3output.h"
+
+typedef struct hal_usart_s {
+   uint32_t index;
+   hal_port_t port;
+} hal_usart_t;
+
+void hal_usarts_init(void);
+void hal_usart_send(hal_usart_t* usart, char* buf, size_t buflen);
+
+#endif

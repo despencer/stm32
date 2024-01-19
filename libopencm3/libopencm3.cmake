@@ -48,7 +48,7 @@ add_custom_command(
             ${CMAKE_SOURCE_DIR}/board.config
             ${OPENCM3HAL_SRC}/opencm3hal.c.jinja ${OPENCM3HAL_SRC}/opencm3res.c.jinja ${OPENCM3HAL_SRC}/opencm3hal.h.jinja
             ${DEPENDENCIES}
-            ${OPENCM3HAL_SRC}/output.py
+            ${OPENCM3HAL_SRC}/output.py ${OPENCM3HAL_SRC}/usart.py
     COMMENT "Generating HAL")
 add_custom_target(mcu_hal DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/opencm3hal.h)
 add_dependencies(${EXECUTABLE} mcu_hal)

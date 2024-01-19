@@ -1,0 +1,10 @@
+#ifndef OPENCM3_HAL_USARTRES_H
+#define OPENCM3_HAL_USARTRES_H
+
+#include "opencm3usart.h"
+
+{% for usart in config.usarts -%}
+extern hal_usart_t {{usart.reference}};
+{% endfor %}
+
+#endif
