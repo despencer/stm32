@@ -16,7 +16,7 @@ board:
             tx: [ pa11, pc6 ]
             rx: [ pa12, pc7 ]
       pins:
-          - name: pa2
+          - name: A2
             tolerant5v: yes
             altfuncs:
                - index: 7
@@ -24,31 +24,31 @@ board:
                       type: usart
                       index: 2
                       signal: tx
-          - name: pa3
+          - name: A3
             tolerant5v: yes
-          - name: pa9
+          - name: A9
             tolerant5v: yes
-          - name: pa10
+          - name: A10
             tolerant5v: yes
-          - name: pa11
+          - name: A11
             tolerant5v: yes
-          - name: pa12
+          - name: A12
             tolerant5v: yes
-          - name: pa15
+          - name: A15
             tolerant5v: yes
-          - name: pb3
+          - name: B3
             tolerant5v: yes
-          - name: pb6
+          - name: B6
             tolerant5v: yes
-          - name: pb7
+          - name: B7
             tolerant5v: yes
-          - name: pc6
+          - name: C6
             tolerant5v: yes
-          - name: pc7
+          - name: C7
             tolerant5v: yes
-          - name: pd5
+          - name: D5
             tolerant5v: yes
-          - name: pd6
+          - name: D6
             tolerant5v: yes
 
 
