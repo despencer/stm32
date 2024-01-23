@@ -3,8 +3,6 @@
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/usart.h>
 
-void hal_usart_open(hal_usart_t* usart);
-
 {% for usart in config.usarts -%}
 hal_usart_t {{usart.reference}};
 {% endfor %}
@@ -12,11 +10,25 @@ hal_usart_t {{usart.reference}};
 /* initialiation of all claimed usart resources */
 void hal_usarts_init(void)
 {
-}
+{% for usart in config.usarts -%}
+  {{usart.reference}}.index = {{usart.index}};
+{% endfor %}
 
-/* opens and configures usart */
-void hal_usart_open(hal_usart_t* usart)
-{
+/* enable clock signals */
+{% for port in config.ports -%}
+  rcc_periph_clock_enable(RCC_GPIO{{port}});
+{% endfor %}
+{% for usart in config.usarts -%}
+  rcc_periph_clock_enable(RCC_USART{{usart.index}});
+{% endfor %}
+
+/* port configuration for USART */
+{% for usart in config.usarts -%}
+{% for port in usart.ports -%}
+  gpio_mode_setup(GPIO{{port.name}}, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO{{port.pin}});
+  gpio_set_af(GPIO{{port.name}}, GPIO_AF{{port.function}}, GPIO{{port.pin}});
+{% endfor %}
+{% endfor %}
 }
 
 void hal_usart_send(hal_usart_t* usart, char* buf, size_t buflen)

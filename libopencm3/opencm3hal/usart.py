@@ -4,13 +4,15 @@ import config
 class Usart:
     def __init__(self):
         self.reference = None
+        self.ports = []
         self.tx = None
 
 class Mapper:
     def __init__(self):
         self.name = 'usart'
-        self.templates = [ "opencm3usart.c", "opencm3usart.h", "opencm3usartres.h", "opencm3output.h" ]
+        self.templates = [ "opencm3usart.c", "opencm3usart.h", "opencm3usartres.h" ]
         self.usarts = []
+        self.ports = []
 
     def addconfig(self, jmap, board):
         self.board = board
@@ -28,9 +30,13 @@ class Mapper:
         if ptype not in jmap:
             return
         p = port.Port()
+        p.type = ptype
         p.name = jmap[ptype]['port']
         p.pin = jmap[ptype]['pin']
         p.function = config.getfunc(board.mcu, 'usart', usart.index, ptype, p.name, p.pin)
         setattr(usart, ptype, p)
+        usart.ports.append(p)
+        if p.name not in self.ports:
+              self.ports.append(p.name)
 
 
