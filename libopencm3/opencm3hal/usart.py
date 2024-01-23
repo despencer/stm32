@@ -6,6 +6,11 @@ class Usart:
         self.reference = None
         self.ports = []
         self.tx = None
+        self.baudrate = 38400
+        self.databits = 8
+        self.stopbits = "1"
+        self.parity = "NONE"
+        self.bufsize = 256
 
 class Mapper:
     def __init__(self):

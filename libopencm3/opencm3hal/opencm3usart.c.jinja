@@ -7,11 +7,13 @@
 hal_usart_t {{usart.reference}};
 {% endfor %}
 
+static void hal_uart_task(void *args);
+
 /* initialiation of all claimed usart resources */
 void hal_usarts_init(void)
 {
 {% for usart in config.usarts -%}
-  {{usart.reference}}.index = {{usart.index}};
+  {{usart.reference}}.index = USART{{usart.index}};
 {% endfor %}
 
 /* enable clock signals */
@@ -29,9 +31,43 @@ void hal_usarts_init(void)
   gpio_set_af(GPIO{{port.name}}, GPIO_AF{{port.function}}, GPIO{{port.pin}});
 {% endfor %}
 {% endfor %}
+
+/* USART configuration */
+{% for usart in config.usarts -%}
+  usart_set_baudrate(USART{{usart.index}}, {{usart.baudrate}});
+  usart_set_databits(USART{{usart.index}}, {{usart.databits}});
+  usart_set_stopbits(USART{{usart.index}}, USART_STOPBITS_{{usart.stopbits}});
+  usart_set_mode(USART{{usart.index}}, USART_MODE_TX);
+  usart_set_parity(USART{{usart.index}}, USART_PARITY_{{usart.parity}});
+  usart_set_flow_control(USART{{usart.index}}, USART_FLOWCONTROL_NONE);
+  usart_enable(USART{{usart.index}});
+  {{usart.reference}}.tx = xQueueCreate({{usart.bufsize}},sizeof(char));
+  xTaskCreate(hal_uart_task,"UART",100,&{{usart.reference}},configMAX_PRIORITIES-1,NULL);
+{% endfor %}
+}
+
+static void hal_uart_task(void *args)
+{
+ char ch;
+ hal_usart_t* usart;
+ usart = (hal_usart_t*)args;
+
+ for (;;)
+   {
+       // Receive char to be TX
+   if ( xQueueReceive(usart->tx,&ch,500) == pdPASS )
+        {
+        while ( !usart_get_flag(usart->index, USART_SR_TXE) )
+             taskYIELD();   // Yield until ready
+        usart_send(usart->index, ch);
+        }
+   }
 }
 
 void hal_usart_send(hal_usart_t* usart, char* buf, size_t buflen)
 {
+ unsigned int i;
+ for(i=0; i<buflen; i++)
+    xQueueSend(usart->tx, buf+i, portMAX_DELAY); 
 }
 

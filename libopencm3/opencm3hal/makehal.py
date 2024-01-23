@@ -3,7 +3,7 @@ import argparse
 import sys
 import config
 
-templates = [ "opencm3hal.h", "opencm3hal.c", "opencm3res.c" ]
+templates = [ "opencm3hal.h", "opencm3haldef.h", "opencm3hal.c", "opencm3res.c" ]
 
 def main():
     parser = argparse.ArgumentParser(description='Generates HAL file')

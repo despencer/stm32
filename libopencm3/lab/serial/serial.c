@@ -6,6 +6,8 @@
 
 static char* hello = "Hello from STM32\n";
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-overread"
 static void maintask(void *args __attribute((unused)))
 {
  for (;;)
@@ -14,6 +16,7 @@ static void maintask(void *args __attribute((unused)))
     vTaskDelay(1000);
   }
 }
+#pragma GCC diagnostic pop
 
 int main(void)
 {

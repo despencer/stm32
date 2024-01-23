@@ -46,7 +46,7 @@ add_custom_command(
     COMMAND ${Python_EXECUTABLE} ${OPENCM3HAL_SRC}/makehal.py ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${BOARD}
     DEPENDS ${OPENCM3HAL_SRC}/makehal.py ${OPENCM3HAL_SRC}/makedeps.py ${OPENCM3HAL_SRC}/config.py
             ${CMAKE_SOURCE_DIR}/board.config
-            ${OPENCM3HAL_SRC}/opencm3hal.c.jinja ${OPENCM3HAL_SRC}/opencm3res.c.jinja ${OPENCM3HAL_SRC}/opencm3hal.h.jinja
+            ${OPENCM3HAL_SRC}/opencm3hal.c.jinja ${OPENCM3HAL_SRC}/opencm3res.c.jinja ${OPENCM3HAL_SRC}/opencm3hal.h.jinja ${OPENCM3HAL_SRC}/opencm3haldef.h.jinja
             ${DEPENDENCIES}
             ${OPENCM3HAL_SRC}/output.py ${OPENCM3HAL_SRC}/usart.py
     COMMENT "Generating HAL")

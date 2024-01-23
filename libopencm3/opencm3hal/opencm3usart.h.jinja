@@ -3,9 +3,12 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "FreeRTOS.h"
+#include "queue.h"
 
 typedef struct hal_usart_s {
    uint32_t index;
+   QueueHandle_t tx;
 } hal_usart_t;
 
 void hal_usarts_init(void);
