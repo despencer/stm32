@@ -4,7 +4,7 @@
 #include <opencm3hal.h>
 #include <string.h>
 
-static char* hello = "Hello from STM32\n";
+static char* hello = "Hello from STM32\n\r";
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstringop-overread"
@@ -12,7 +12,7 @@ static void maintask(void *args __attribute((unused)))
 {
  for (;;)
   {
-    hal_usart_send(&console, hello, strnlen(hello, 100));
+    hal_usart_send(&console, (uint8_t*)hello, strnlen(hello, 100));
     vTaskDelay(1000);
   }
 }

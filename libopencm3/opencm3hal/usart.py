@@ -6,6 +6,7 @@ class Usart:
         self.reference = None
         self.ports = []
         self.tx = None
+        self.rx = None
         self.baudrate = 38400
         self.databits = 8
         self.stopbits = "1"
@@ -18,6 +19,8 @@ class Mapper:
         self.templates = [ "opencm3usart.c", "opencm3usart.h", "opencm3usartres.h" ]
         self.usarts = []
         self.ports = []
+        self.hastx = False
+        self.hasrx = False
 
     def addconfig(self, jmap, board):
         self.board = board
@@ -25,11 +28,16 @@ class Mapper:
         u.reference = jmap['name']
         u.index = jmap['index']
         self.addport(u, jmap, 'tx', board)
+        self.addport(u, jmap, 'rx', board)
         self.usarts.append(u)
         if "opencm3usartres.h" not in board.hal.resheaders:
             board.hal.resheaders.append("opencm3usartres.h")
         if "opencm3usart.c" not in board.hal.resources:
             board.hal.resources.append("opencm3usart.c")
+        if u.tx != None:
+            self.hastx = True
+        if u.rx != None:
+            self.hasrx = True
 
     def addport(self, usart, jmap, ptype, board):
         if ptype not in jmap:

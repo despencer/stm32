@@ -4,19 +4,17 @@
 #include <opencm3hal.h>
 #include <string.h>
 
-static char* hello = "Hello from STM32\n";
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wstringop-overread"
 static void maintask(void *args __attribute((unused)))
 {
+ uint8_t data;
  for (;;)
-  {
-    hal_usart_send(&console, hello, strnlen(hello, 100));
-    vTaskDelay(1000);
-  }
+   {
+   data = hal_usart_read(&console);
+   hal_usart_send(&console, &data, 1);
+   if (data == '\r')
+      { data = '\n'; hal_usart_send(&console, &data, 1); }
+   }
 }
-#pragma GCC diagnostic pop
 
 int main(void)
 {

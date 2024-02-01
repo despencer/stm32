@@ -60,11 +60,12 @@ def readconfig(cfgdir, options):
         exit(2)
     cfg = Options()
     cfg.mappers = []
-    for jmap in jconfig['mapping']:
-        mapper = mappers[jmap['type']]
-        mapper.addconfig(jmap, options)
-        if mapper not in cfg.mappers:
-            cfg.mappers.append(mapper)
+    if 'mapping' in jconfig:
+        for jmap in jconfig['mapping']:
+            mapper = mappers[jmap['type']]
+            mapper.addconfig(jmap, options)
+            if mapper not in cfg.mappers:
+                cfg.mappers.append(mapper)
     return cfg
 
 def getfunc(mcu, type, index, signal, port, pin):

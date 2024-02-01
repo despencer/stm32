@@ -8,10 +8,22 @@
 
 typedef struct hal_usart_s {
    uint32_t index;
+{% if config.hastx -%}
    QueueHandle_t tx;
+{% endif -%}
+{% if config.hasrx -%}
+   QueueHandle_t rx;
+   uint8_t overflow;
+{% endif -%}
 } hal_usart_t;
 
 void hal_usarts_init(void);
-void hal_usart_send(hal_usart_t* usart, char* buf, size_t buflen);
+
+{% if config.hastx -%}
+void hal_usart_send(hal_usart_t* usart, uint8_t* buf, size_t buflen);
+{% endif -%}
+{% if config.hasrx -%}
+uint8_t hal_usart_read(hal_usart_t* usart);
+{% endif -%}
 
 #endif

@@ -26,6 +26,12 @@ board:
                       signal: tx
           - name: A3
             tolerant5v: yes
+            altfuncs:
+               - index: 7
+                 function:
+                      type: usart
+                      index: 2
+                      signal: rx
           - name: A9
             tolerant5v: yes
           - name: A10

@@ -2,12 +2,16 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/usart.h>
+#include <libopencm3/cm3/nvic.h>
+#include "opencm3outputres.h"
 
 {% for usart in config.usarts -%}
 hal_usart_t {{usart.reference}};
 {% endfor %}
 
-static void hal_uart_task(void *args);
+{% if config.hastx -%}
+static void hal_usart_task(void *args);
+{% endif -%}
 
 /* initialiation of all claimed usart resources */
 void hal_usarts_init(void)
@@ -24,6 +28,12 @@ void hal_usarts_init(void)
   rcc_periph_clock_enable(RCC_USART{{usart.index}});
 {% endfor %}
 
+/* interrupt setup */
+{% for usart in config.usarts -%}
+  nvic_enable_irq(NVIC_USART{{usart.index}}_IRQ);
+  nvic_set_priority(NVIC_USART{{usart.index}}_IRQ, configKERNEL_INTERRUPT_PRIORITY);
+{% endfor %}
+
 /* port configuration for USART */
 {% for usart in config.usarts -%}
 {% for port in usart.ports -%}
@@ -37,18 +47,27 @@ void hal_usarts_init(void)
   usart_set_baudrate(USART{{usart.index}}, {{usart.baudrate}});
   usart_set_databits(USART{{usart.index}}, {{usart.databits}});
   usart_set_stopbits(USART{{usart.index}}, USART_STOPBITS_{{usart.stopbits}});
-  usart_set_mode(USART{{usart.index}}, USART_MODE_TX);
+  usart_set_mode(USART{{usart.index}}, USART_MODE{% if usart.tx != None -%}_TX{% endif -%}{% if usart.rx != None -%}_RX{% endif -%});
   usart_set_parity(USART{{usart.index}}, USART_PARITY_{{usart.parity}});
   usart_set_flow_control(USART{{usart.index}}, USART_FLOWCONTROL_NONE);
   usart_enable(USART{{usart.index}});
-  {{usart.reference}}.tx = xQueueCreate({{usart.bufsize}},sizeof(char));
-  xTaskCreate(hal_uart_task,"UART",100,&{{usart.reference}},configMAX_PRIORITIES-1,NULL);
+{% if usart.tx != None -%}
+  {{usart.reference}}.tx = xQueueCreate({{usart.bufsize}},sizeof(uint8_t));
+  xTaskCreate(hal_usart_task,"UART{{usart.reference}}",100,&{{usart.reference}},configMAX_PRIORITIES-1,NULL);
+{% endif -%}
+{% if usart.rx != None -%}
+  {{usart.reference}}.rx = xQueueCreate({{usart.bufsize}},sizeof(uint8_t));
+  {{usart.reference}}.overflow = 0;
+  usart_enable_rx_interrupt(USART{{usart.index}});
+{% endif -%}
 {% endfor %}
 }
 
-static void hal_uart_task(void *args)
+/* usart transmission */
+{% if config.hastx -%}
+static void hal_usart_task(void *args)
 {
- char ch;
+ uint8_t ch;
  hal_usart_t* usart;
  usart = (hal_usart_t*)args;
 
@@ -64,10 +83,46 @@ static void hal_uart_task(void *args)
    }
 }
 
-void hal_usart_send(hal_usart_t* usart, char* buf, size_t buflen)
+void hal_usart_send(hal_usart_t* usart, uint8_t* buf, size_t buflen)
 {
  unsigned int i;
  for(i=0; i<buflen; i++)
     xQueueSend(usart->tx, buf+i, portMAX_DELAY); 
 }
+{% endif -%}
 
+{%- if config.hasrx -%}
+/* usart receiver */
+static void hal_usart_isr(hal_usart_t* usart)
+{
+ uint8_t data;
+     /* checking that get RXNE (receiver not empty interrupt) */
+ if (usart_get_flag(usart->index, USART_SR_RXNE))
+   {
+     data = usart_recv(usart->index);
+              /* if the queue is full we can do nothing except mark the shit had happen */
+     if( xQueueSendFromISR(usart->rx, &data, NULL) == errQUEUE_FULL)
+          usart->overflow = 1;
+   }
+}
+
+ {% for usart in config.usarts -%}
+  {% if usart.rx != None -%}
+void usart{{usart.index}}_isr(void)
+{
+ hal_usart_isr(&{{usart.reference}});
+}
+  {% endif -%}
+ {% endfor %}
+
+uint8_t hal_usart_read(hal_usart_t* usart)
+{
+ uint8_t data;
+ for(;;)
+   {
+   if ( xQueueReceive(usart->rx,&data,1000) == pdTRUE )
+       return data;
+   }
+}
+
+{% endif -%}

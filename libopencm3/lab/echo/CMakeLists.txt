@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 include(${CMAKE_SOURCE_DIR}/../lab.cmake)
 
-project(serial VERSION 1.0)
+project(echo VERSION 1.0)
 set(EXECUTABLE ${PROJECT_NAME})
 
 add_executable(${EXECUTABLE} echo.c)
