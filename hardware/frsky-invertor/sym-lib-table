@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "frsky-invertor")(type "KiCad")(uri "${KIPRJMOD}/frsky-invertor.kicad_sym")(options "")(descr ""))
+)
