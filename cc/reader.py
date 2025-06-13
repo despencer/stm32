@@ -5,8 +5,13 @@ import time
 def openpipe(args):
     return open(args.channel, 'rb')
 
+def openserial(args):
+    import serial
+    return serial.Serial(port=args.channel, baudrate=38400, parity=serial.PARITY_NONE, bytesize=serial.EIGHTBITS,
+                         stopbits=serial.STOPBITS_ONE)
+
 def getchannel(args):
-    return {'pipe':openpipe}[args.chtype](args)
+    return {'pipe':openpipe,'serial':openserial}[args.chtype](args)
 
 def main():
     import argparse
