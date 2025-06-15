@@ -24,6 +24,10 @@ void hal_usart_send(hal_usart_t* usart, uint8_t* buf, size_t buflen);
 {% endif -%}
 {% if config.hasrx -%}
 uint8_t hal_usart_read(hal_usart_t* usart);
+uint32_t hal_usart_read_uint32(hal_usart_t* usart);
+void hal_usart_read_buf(hal_usart_t* usart, uint8_t* buf, size_t buflen);
+void hal_usart_skip(hal_usart_t* usart, size_t buflen);
+
 {% endif -%}
 
 #endif
