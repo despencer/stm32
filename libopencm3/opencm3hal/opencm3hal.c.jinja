@@ -1,5 +1,6 @@
 #include "opencm3hal.h"
 #include <libopencm3/stm32/rcc.h>
+#include <libopencm3/cm3/scb.h>
 
 void hal_setup_clock(void);
 
@@ -14,4 +15,9 @@ void hal_init(void)
 void hal_setup_clock(void)
 {
  {{ options.hal.clock }}
+}
+
+void hal_reset(void)
+{
+ scb_reset_system();
 }

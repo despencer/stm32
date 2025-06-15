@@ -10,20 +10,29 @@
 #define MSG_OUT_MESSAGE 0
 
 void cmd_reset(uint32_t msgsize, hal_usart_t* usart);
+void put_message(hal_usart_t* usart, const char* msg);
 
 static char* resetmsg = "Resetting\n\r";
+static char* listenmsg = "Listening\n\r";
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstringop-overread"
-void cmd_reset(uint32_t, hal_usart_t* usart)
+void put_message(hal_usart_t* usart, const char* msg)
 {
  uint32_t hb = MSG_OUT_MESSAGE, size;
- size = strnlen(resetmsg, 100);
+ size = strnlen(msg, 100);
  hal_usart_send(usart, (uint8_t*)&hb, 4);
  hal_usart_send(usart, (uint8_t*)&size, 4);
- hal_usart_send(usart, (uint8_t*)resetmsg, size);
+ hal_usart_send(usart, (uint8_t*)msg, size);
 }
 #pragma GCC diagnostic pop
+
+void cmd_reset(uint32_t, hal_usart_t* usart)
+{
+ put_message(usart, resetmsg);
+ vTaskDelay(500 / portTICK_PERIOD_MS);
+ hal_reset();
+}
 
 typedef void (*msg_handler)(uint32_t msgsize, hal_usart_t* usart);
 
@@ -32,6 +41,8 @@ msg_handler handlers[MSG_IN_COUNT] = {cmd_reset};
 static void cmdlisten(void *args __attribute((unused)))
 {
  uint32_t msgid, msgsize;
+
+ put_message(&cmdcnt, listenmsg);
 
  for(;;)
    {
