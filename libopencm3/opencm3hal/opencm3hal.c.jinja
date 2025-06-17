@@ -1,6 +1,7 @@
 #include "opencm3hal.h"
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/cm3/scb.h>
+#include <libopencm3/stm32/rtc.h>
 
 void hal_setup_clock(void);
 
@@ -20,4 +21,15 @@ void hal_setup_clock(void)
 void hal_reset(void)
 {
  scb_reset_system();
+}
+
+uint32_t hal_read_backup_register(uint8_t no)
+{
+ return RTC_BKPXR(no);
+}
+
+void hal_write_backup_register(uint8_t no, uint32_t value)
+{
+ pwr_disable_backup_domain_write_protect();
+ RTC_BKPXR(no) = value;
 }

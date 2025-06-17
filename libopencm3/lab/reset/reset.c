@@ -12,8 +12,8 @@
 void cmd_reset(uint32_t msgsize, hal_usart_t* usart);
 void put_message(hal_usart_t* usart, const char* msg);
 
-static char* resetmsg = "Resetting\n\r";
-static char* listenmsg = "Listening\n\r";
+static char* resetmsg = "Resetting\n";
+char listenmsg[] = "_: Listening\n";
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstringop-overread"
@@ -40,9 +40,13 @@ msg_handler handlers[MSG_IN_COUNT] = {cmd_reset};
 
 static void cmdlisten(void *args __attribute((unused)))
 {
- uint32_t msgid, msgsize;
+ uint32_t msgid, msgsize, backval;
 
+ backval = hal_read_backup_register(0);
+ (*listenmsg) = '0' + backval;
  put_message(&cmdcnt, listenmsg);
+ backval++;
+ hal_write_backup_register(0, backval);
 
  for(;;)
    {
