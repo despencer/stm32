@@ -28,7 +28,7 @@ class CommunicationProcessor:
 
     def openserial(self):
         import serial
-        return serial.Serial(port=self.args.channel, baudrate=38400, parity=serial.PARITY_NONE, bytesize=serial.EIGHTBITS,
+        return serial.Serial(port=self.args.channel, baudrate=38400, parity=serial.PARITY_EVEN, bytesize=serial.EIGHTBITS,
                              stopbits=serial.STOPBITS_ONE)
 
     def getchannel(self):

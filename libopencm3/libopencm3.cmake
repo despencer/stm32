@@ -55,7 +55,7 @@ add_dependencies(${EXECUTABLE} mcu_hal)
 
 target_compile_options(${EXECUTABLE} PRIVATE ${STM32_C_FLAGS})
 target_include_directories(${EXECUTABLE} PRIVATE ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_LIST_DIR}/opencm3hal)
-target_sources(${EXECUTABLE} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/opencm3hal.c ${CMAKE_CURRENT_BINARY_DIR}/opencm3res.c)
+target_sources(${EXECUTABLE} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/opencm3hal.c ${CMAKE_CURRENT_BINARY_DIR}/opencm3res.c ${OPENCM3HAL_PATH}/opencm3halmcu.c)
 
 target_link_options(${EXECUTABLE} PRIVATE ${STM32_LINK_FLAGS}
   -T${LINKER_FILE}

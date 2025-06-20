@@ -27,6 +27,10 @@ class Mapper:
         u = Usart()
         u.reference = jmap['name']
         u.index = jmap['index']
+        if 'parity' in jmap:
+            u.parity = jmap['parity']
+        if u.parity == 'EVEN':
+            u.databits += 1
         self.addport(u, jmap, 'tx', board)
         self.addport(u, jmap, 'rx', board)
         self.usarts.append(u)
