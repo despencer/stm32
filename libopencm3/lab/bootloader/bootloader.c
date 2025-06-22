@@ -70,11 +70,11 @@ static void cmdlisten(void *args __attribute((unused)))
 
 int main(void)
 {
-/*   if(hal_read_backup_register(0) != 0)
+   if(hal_read_backup_register(0) != 0)
       {
       hal_write_backup_register(0, 0);
       hal_jump_to_bootloader();
-      }*/
+      }
    hal_init();
 
    xTaskCreate(cmdlisten, "CmdLst", 200, NULL, configMAX_PRIORITIES-1,NULL);
