@@ -10,9 +10,11 @@ __attribute__((always_inline)) static inline void __set_MSP(uint32_t topOfMainSt
   __asm volatile ("MSR msp, %0" : : "r" (topOfMainStack) : );
 }
 
+funcjump volatile jumpbl;
+
 void hal_jump_to_bootloader(void)
 {
- funcjump jumpbl = (funcjump)(*(uint32_t*)BOOTLOADER_JUMP);
+ jumpbl = (funcjump)(*(uint32_t*)BOOTLOADER_JUMP);
 // asm("move r13,a");
 // __regMainStackPointer = BOOTLOADER_ADDRESS;
  __set_MSP( *(uint32_t*)BOOTLOADER_ADDRESS);
