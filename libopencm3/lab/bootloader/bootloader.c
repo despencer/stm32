@@ -17,6 +17,7 @@ void put_message(hal_usart_t* usart, const char* msg);
 
 static char* resetmsg = "Resetting\n";
 char listenmsg[] = "Listening\n";
+volatile uint32_t version = 2;
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstringop-overread"
@@ -80,6 +81,7 @@ int main(void)
    xTaskCreate(cmdlisten, "CmdLst", 200, NULL, configMAX_PRIORITIES-1,NULL);
    vTaskStartScheduler();
 
+   version++;  // just for reference
    for (;;);
    return 0;
 }
