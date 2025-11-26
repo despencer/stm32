@@ -36,7 +36,7 @@ A MCU is straightforward and could not adapt to another version.
 The list of predefined Function ID (lower byte comes first):
 
 |Function ID|Name|Size|Comments|
-|---|---|---|
+|---|---|---|---|
 |0x0001|Information|-|**Information functions**|
 |0x0101|Version|16|Firmware UUID little endian|
 |0x0002|Telemetry|-|**Telemetry functions**|
