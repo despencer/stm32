@@ -15,7 +15,7 @@ def main():
         with slpx.open(port) as line:
             tick = 0
             while True:
-                line.send(splx.SLPX_HEARTBEAT, tick.to_bytes(4, 'little'))
+                line.send(slpx.SLPX_HEARTBEAT, tick.to_bytes(4, 'little'))
                 tick += 1
                 time.sleep(1)
 

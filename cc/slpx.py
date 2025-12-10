@@ -63,7 +63,7 @@ class SLPX:
     def read(self):
         while True:
             self.xor_rx = 0
-            while self.channel.read_byte != SLPX_BYTE_START:
+            while self.channel.read_byte() != SLPX_BYTE_START:
                 pass
             funcid = self.read_byte()
             funcid += self.read_byte() << 8
@@ -71,7 +71,7 @@ class SLPX:
             buflen += self.read_byte() << 8
             data = []
             for i in range(0, buflen):
-                data[i] = self.read_byte()
+                data.append( self.read_byte() )
             self.read_byte()
             if self.xor_rx == 0:
                 return (funcid, bytes(data) )

@@ -1,27 +1,40 @@
+import builtins
 import serial
+import os
+import time
 
 class Pipe:
     def __init__(self, name):
         self.name = name
-        self.pipe = None
+        self.readpipe = None
+        self.sendpipe = None
 
     def open(self):
-        self.pipe = open(self.name, 'wb+')
+        names = self.name.split(':')
+        self.readpipe = os.open(names[0], os.O_RDONLY | os.O_NONBLOCK)
+        self.sendpipe = builtins.open(names[1], 'wb')
 
-    def close(self)
-        self.pipe.close()
+    def close(self):
+        os.close(self.readpipe)
+        self.sendpipe.close()
 
     def send_byte(self, data):
-        self.pipe.write(data.to_bytes(1, 'little'))
+        self.sendpipe.write(data.to_bytes(1, 'little'))
 
-    def read_byte(self, data):
-        buf = self.pipe.read(1)
-        if len(buf) == 0:
-            raise Exception("Pipe is broken")
-        return buf[0]
+    def read_byte(self):
+        while True:
+            try:
+                buf = os.read(self.readpipe, 1)
+                if buf != None and len(buf) > 0:
+                    return buf[0]
+            except OSError as e:
+                if e.errno == 11:
+                    time.sleep(0.5)
+                else:
+                    raise Exception(f"Pipe is broken with error {e}")
 
     def flush(self):
-        self.pipe.flush()
+        self.sendpipe.flush()
 
     def __enter__(self):
         self.open()
@@ -47,7 +60,7 @@ class Serial:
     def send_byte(self, data):
         self.port.write(data.to_bytes(1, 'little'))
 
-    def read_byte(self, data):
+    def read_byte(self):
         buf = self.port.read(1)
         if len(buf) == 0:
             raise Exception("Serial port is broken")
@@ -70,5 +83,5 @@ def openpipe(args):
 def openserial(args):
     return Serial(args.channel)
 
-def getchannel(args):
+def open(args):
     return {'pipe':openpipe,'serial':openserial}[args.chtype](args)
