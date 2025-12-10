@@ -42,7 +42,9 @@ The list of predefined Function ID (lower byte comes first):
 |0x0002|Telemetry|-|**Telemetry functions**|
 |0x0102|Start|0|The firmware just started in a normal mode|
 |0x0202|Bootloader|0|The firmware restarted and is preparing to enter bootloader mode|
-|0x0302|Message|N|The string messages without ending zero|
+|0x0302|Close|0|The firmware is going to poweroff|
+|0x0402|Message|N|The string messages without ending zero|
+|0x0502|Heart Beat|4|4-byte integer with steady increments|
 |0x0003|Command|-|**Command functions**|
 |0x0103|Reboot|0|Rebbot MCU|
 |0x0203|Bootloader|0|Switch to a bootloader mode (maybe via reboot)|

@@ -1,0 +1,10 @@
+#ifndef SLPXRES_H
+#define SLPXRES_H
+
+#include "slpx.h"
+
+{% for port in config.ports -%}
+extern slpx_t {{port.reference}};
+{% endfor %}
+
+#endif

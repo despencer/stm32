@@ -1,5 +1,6 @@
 import jinja2
 import argparse
+import os
 import sys
 import config
 
@@ -23,6 +24,7 @@ def main():
             target.write(env.get_template(tmpl+'.jinja').render(options=options, config=cfg))
     for mapper in cfg.mappers:
         for tmpl in mapper.templates:
+            os.makedirs(os.path.dirname(args.dstdir + '/' + tmpl), exist_ok=True)
             with open(args.dstdir + '/' + tmpl, mode='w') as target:
                target.write(env.get_template(tmpl+'.jinja').render(config=mapper))
     return 0

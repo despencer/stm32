@@ -9,7 +9,7 @@ void hal_init(void)
 {
  hal_setup_clock();
 {% for mapper in config.mappers -%}
- hal_{{mapper.name}}s_init();
+ {{mapper.prefix}}{{mapper.name}}s_init();
 {% endfor %}
 }
 

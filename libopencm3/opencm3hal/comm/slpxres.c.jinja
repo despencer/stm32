@@ -1,0 +1,16 @@
+#include "slpx.h"
+
+{% for port in config.ports -%}
+slpx_t {{port.reference}};
+{% endfor %}
+
+void slpxs_init(void)
+{
+{% for port in config.ports -%}
+{{port.reference}}.usart = &{{port.port}};
+{% endfor %}
+
+{% for port in config.ports -%}
+ slpx_start(&{{port.reference}});
+{% endfor %}
+}

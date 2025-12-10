@@ -16,6 +16,7 @@ class Usart:
 class Mapper:
     def __init__(self):
         self.name = 'usart'
+        self.prefix = 'hal_'
         self.templates = [ "opencm3usart.c", "opencm3usart.h", "opencm3usartres.h" ]
         self.usarts = []
         self.ports = []

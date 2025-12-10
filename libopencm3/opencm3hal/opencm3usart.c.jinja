@@ -88,6 +88,11 @@ void hal_usart_send(hal_usart_t* usart, uint8_t* buf, size_t buflen)
  for(i=0; i<buflen; i++)
     xQueueSend(usart->tx, buf+i, portMAX_DELAY); 
 }
+
+void hal_usart_send_byte(hal_usart_t* usart, uint8_t data)
+{
+ xQueueSend(usart->tx, &data, portMAX_DELAY); 
+}
 {% endif -%}
 
 {%- if config.hasrx -%}

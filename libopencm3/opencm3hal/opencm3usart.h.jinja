@@ -1,10 +1,9 @@
 #ifndef OPENCM3_HAL_USART_H
 #define OPENCM3_HAL_USART_H
 
-#include <stddef.h>
-#include <stdint.h>
 #include "FreeRTOS.h"
 #include "queue.h"
+#include "halusart.h"
 
 typedef struct hal_usart_s {
    uint32_t index;
@@ -17,10 +16,12 @@ typedef struct hal_usart_s {
 {% endif -%}
 } hal_usart_t;
 
+/*
 void hal_usarts_init(void);
 
 {% if config.hastx -%}
 void hal_usart_send(hal_usart_t* usart, uint8_t* buf, size_t buflen);
+void hal_usart_send_byte(hal_usart_t* usart, uint8_t data);
 {% endif -%}
 {% if config.hasrx -%}
 uint8_t hal_usart_read(hal_usart_t* usart);
@@ -29,5 +30,6 @@ void hal_usart_read_buf(hal_usart_t* usart, uint8_t* buf, size_t buflen);
 void hal_usart_skip(hal_usart_t* usart, size_t buflen);
 
 {% endif -%}
+*/
 
 #endif

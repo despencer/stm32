@@ -1,10 +1,14 @@
 import sys
+import os
+sys.path.append(os.path.dirname(__file__) + '/comm')
 import yaml
 import output
 import usart
+import slpx
 
 hal = "/opencm3hal"
 mappers = { 'output':output.Mapper(), 'usart':usart.Mapper() }
+protocols = {'SLPX': slpx.Mapper() }
 boards = "/boards"
 
 class Options:
@@ -30,6 +34,7 @@ def readoptions(jopt):
     return jopt
 
 def getoptions(haldir, boardfile):
+    ''' Reads a board definition file and a MCU definition file '''
     with open("{0}{1}/{2}.board".format(haldir, boards, boardfile)) as fboard:
         jboard = yaml.load(fboard, Loader=yaml.Loader)['board']
     with open("{0}{1}/{2}/{3}.mcu".format(haldir, hal, jboard['cpu']['family'], jboard['cpu']['options'])) as fcpu:
@@ -48,6 +53,7 @@ def getoptions(haldir, boardfile):
     return opt
 
 def readconfig(cfgdir, options):
+    ''' Reads a project config file over board options '''
     with open("{0}/board.config".format(cfgdir)) as fconfig:
         jfconfig = yaml.load(fconfig, Loader=yaml.Loader)
     jconfig = None
@@ -62,11 +68,16 @@ def readconfig(cfgdir, options):
     cfg.mappers = []
     if 'mapping' in jconfig:
         for jmap in jconfig['mapping']:
-            mapper = mappers[jmap['type']]
-            mapper.addconfig(jmap, options)
-            if mapper not in cfg.mappers:
-                cfg.mappers.append(mapper)
+            addmapper(cfg, options, mappers[jmap['type']], jmap)
+    if 'protocols' in jconfig:
+        for jproto in jconfig['protocols']:
+            addmapper(cfg, options, protocols[jproto['type']], jproto)
     return cfg
+
+def addmapper(cfg, options, mapper, jmap):
+    mapper.addconfig(jmap, options)
+    if mapper not in cfg.mappers:
+        cfg.mappers.append(mapper)
 
 def getfunc(mcu, type, index, signal, port, pin):
     if isinstance(pin, int):
