@@ -58,16 +58,16 @@ class Serial:
         self.serial.close()
 
     def send_byte(self, data):
-        self.port.write(data.to_bytes(1, 'little'))
+        self.serial.write(data.to_bytes(1, 'little'))
 
     def read_byte(self):
-        buf = self.port.read(1)
+        buf = self.serial.read(1)
         if len(buf) == 0:
             raise Exception("Serial port is broken")
         return buf[0]
 
     def flush(self):
-        self.pipe.flush()
+        self.serial.flush()
 
     def __enter__(self):
         self.open()

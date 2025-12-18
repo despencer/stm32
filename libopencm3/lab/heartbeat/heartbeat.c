@@ -8,7 +8,7 @@
 static void heartbeat(void *args __attribute((unused)))
 {
  const TickType_t delay = 1000 / portTICK_PERIOD_MS;
- uint32_t value = 0;
+ uint32_t value = 232;
  for (;;)
    {
    slpx_send(&cmdcnt, SLPX_HEARTBEAT, (uint8_t*)&value, 4);
