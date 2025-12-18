@@ -11,6 +11,6 @@ void slpxs_init(void)
 {% endfor %}
 
 {% for port in config.ports -%}
- slpx_start(&{{port.reference}});
+ slpx_open(&{{port.reference}});
 {% endfor %}
 }

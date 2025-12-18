@@ -8,11 +8,24 @@
 hal_usart_t {{usart.reference}};
 {% endfor %}
 
+{% for usart in config.usarts -%}
+{% if usart.tx != None -%}
+#define {{usart.reference.upper()}}_TX_BUFLEN {{usart.tx_bufsize}}
+StaticQueue_t {{usart.reference}}_tx_queuedata;
+uint8_t {{usart.reference}}_tx_buf[{{usart.reference.upper()}}_TX_BUFLEN * sizeof(uint8_t)];
+{% endif -%}
+{% if usart.rx != None -%}
+#define {{usart.reference.upper()}}_RX_BUFLEN {{usart.rx_bufsize}}
+StaticQueue_t {{usart.reference}}_rx_queuedata;
+uint8_t {{usart.reference}}_rx_buf[{{usart.reference.upper()}}_RX_BUFLEN * sizeof(uint8_t)];
+{% endif -%}
+{% endfor %}
+
 {% if config.hastx -%}
 static void hal_usart_task(void *args);
 {% endif -%}
 
-/* initialiation of all claimed usart resources */
+/* initialization of all claimed usart resources */
 void hal_usarts_init(void)
 {
 {% for usart in config.usarts -%}
@@ -51,11 +64,11 @@ void hal_usarts_init(void)
   usart_set_flow_control(USART{{usart.index}}, USART_FLOWCONTROL_NONE);
   usart_enable(USART{{usart.index}});
 {% if usart.tx != None -%}
-  {{usart.reference}}.tx = xQueueCreate({{usart.bufsize}},sizeof(uint8_t));
+  {{usart.reference}}.tx = xQueueCreateStatic({{usart.reference.upper()}}_TX_BUFLEN, sizeof(uint8_t), {{usart.reference}}_tx_buf, &{{usart.reference}}_tx_queuedata);
   xTaskCreate(hal_usart_task,"UART{{usart.reference}}",100,&{{usart.reference}},configMAX_PRIORITIES-1,NULL);
 {% endif -%}
 {% if usart.rx != None -%}
-  {{usart.reference}}.rx = xQueueCreate({{usart.bufsize}},sizeof(uint8_t));
+  {{usart.reference}}.rx = xQueueCreateStatic({{usart.reference.upper()}}_RX_BUFLEN, sizeof(uint8_t), {{usart.reference}}_rx_buf, &{{usart.reference}}_rx_queuedata);
   {{usart.reference}}.overflow = 0;
   usart_enable_rx_interrupt(USART{{usart.index}});
 {% endif -%}

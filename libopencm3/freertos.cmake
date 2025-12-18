@@ -17,6 +17,7 @@ add_library(FreeRTOS STATIC
     ${RTOS_PATH}/timers.c
     ${RTOS_PORTABLE_PATH}/port.c
     ${RTOS_PATH}/portable/MemMang/heap_4.c
+    ${OPENCM3HAL_SRC}/freertos.c
 )
 target_include_directories(FreeRTOS PUBLIC ${RTOS_PATH}/include ${RTOS_PORTABLE_PATH} ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 target_compile_options(FreeRTOS PRIVATE ${STM32_C_FLAGS})

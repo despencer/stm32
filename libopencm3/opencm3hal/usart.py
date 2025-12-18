@@ -11,7 +11,8 @@ class Usart:
         self.databits = 8
         self.stopbits = "1"
         self.parity = "NONE"
-        self.bufsize = 256
+        self.rx_bufsize = 256
+        self.tx_bufsize = 256
 
 class Mapper:
     def __init__(self):
