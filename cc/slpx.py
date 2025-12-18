@@ -1,9 +1,9 @@
 # message functions
 SLPX_INFORMATION = 0x01
 SLPX_TELEMETRY   = 0x02
-SLPX_START       = 0x0102
-SLPX_STOP        = 0x0302
-SLPX_HEARTBEAT   = 0x0502
+SLPX_OPEN        = 0x0102
+SLPX_CLOSE       = 0x0202
+SLPX_HEARTBEAT   = 0x0402
 
 # protocol bytes
 SLPX_BYTE_START     = 0xF0    # a start byte
@@ -18,10 +18,10 @@ class SLPX:
         self.xor_rx = 0
 
     def open(self):
-        self.send(SLPX_START, b'')
+        self.send(SLPX_OPEN, b'')
 
     def close(self):
-        self.send(SLPX_STOP, b'')
+        self.send(SLPX_CLOSE, b'')
 
     def send_byte(self, data):
         if data == SLPX_BYTE_START:
@@ -85,3 +85,28 @@ class SLPX:
 
 def open(channel):
     return SLPX(channel)
+
+class EmptyMessage:
+    messages = {SLPX_OPEN: "Serial channel is opened", SLPX_CLOSE: "Serial channel is closing"}
+    def __init__(self, funcid, data):
+        self.funcid = funcid
+        self.message = self.messages[self.funcid]
+
+    def __repr__(self):
+        return f'{self.funcid:04X} {self.message}'
+
+class Message:
+    def __init__(self, funcid, data):
+        self.funcid = funcid
+        self.data = data
+
+    def __repr__(self):
+        return f'{self.funcid:04X} {self.data}'
+
+messages = {SLPX_OPEN: EmptyMessage, SLPX_CLOSE:EmptyMessage}
+
+def read(line):
+    (funcid, msg) = line.read()
+    if funcid in messages:
+        return (messages[funcid])(funcid, msg)
+    return Message(funcid, msg)

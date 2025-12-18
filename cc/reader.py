@@ -2,7 +2,7 @@
 
 import slpx
 import channel
-import time
+import datetime
 
 def main():
     import argparse
@@ -15,8 +15,8 @@ def main():
     with channel.open(args) as port:
         with slpx.open(port) as line:
             while True:
-                (funcid, data) = line.read()
-                print(f'{funcid:04X} {data}')
+                msg = slpx.read(line)
+                print(f'{datetime.datetime.now():%Y-%m-%d %H-%M-%S} {msg}')
 
 if __name__ == "__main__":
     main()

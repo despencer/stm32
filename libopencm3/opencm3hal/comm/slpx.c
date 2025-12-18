@@ -9,7 +9,7 @@ void slpx_send_byte(slpx_t* slpx, uint8_t data);
 
 void slpx_start(slpx_t* splx)
 {
- slpx_send(splx, SLPX_START, NULL, 0);
+ slpx_send(splx, SLPX_OPEN, NULL, 0);
 }
 
 void slpx_send_byte(slpx_t* slpx, uint8_t data)

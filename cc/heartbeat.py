@@ -13,7 +13,7 @@ def main():
 
     with channel.open(args) as port:
         with slpx.open(port) as line:
-            tick = 0
+            tick = 235
             while True:
                 line.send(slpx.SLPX_HEARTBEAT, tick.to_bytes(4, 'little'))
                 tick += 1

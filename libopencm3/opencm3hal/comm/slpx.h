@@ -5,8 +5,8 @@
 
 #define SLPX_INFORMATION 0x01
 #define SLPX_TELEMETRY   0x02
-#define SLPX_START       0x0102
-#define SLPX_HEARTBEAT   0x0502
+#define SLPX_OPEN        0x0102
+#define SLPX_HEARTBEAT   0x0402
 
 typedef struct slpx_s {
    hal_usart_t* usart;
