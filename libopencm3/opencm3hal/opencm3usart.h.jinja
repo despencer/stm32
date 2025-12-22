@@ -5,6 +5,9 @@
 #include "queue.h"
 #include "halusart.h"
 
+#define USART_STATUS_NONE 0
+#define USART_RX_OVERFLOW 0x01
+
 typedef struct hal_usart_s {
    uint32_t index;
 {% if config.hastx -%}
@@ -12,7 +15,7 @@ typedef struct hal_usart_s {
 {% endif -%}
 {% if config.hasrx -%}
    QueueHandle_t rx;
-   uint8_t rx_overflow;
+   uint8_t status;
 {% endif -%}
 } hal_usart_t;
 

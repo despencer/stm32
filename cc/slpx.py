@@ -74,6 +74,8 @@ class SLPX:
                 data.append( self.read_byte() )
             self.read_byte()
             if self.xor_rx == 0:
+                if funcid == SLPX_OPEN:
+                    self.send(SLPX_OPEN_ACK, b'')
                 return (funcid, bytes(data) )
 
     def __enter__(self):

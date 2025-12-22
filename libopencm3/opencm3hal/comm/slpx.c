@@ -7,6 +7,13 @@
 
 void slpx_send_byte(slpx_t* slpx, uint8_t data);
 
+void slpx_init(slpx_t* slpx)
+{
+ slpx->xor_tx = 0;
+ hal_mutex_create(slpx->tx_mutex);
+ slpx->status = SLPX_STATUS_NONE;
+}
+
 void slpx_open(slpx_t* splx)
 {
  slpx_send(splx, SLPX_OPEN, NULL, 0);

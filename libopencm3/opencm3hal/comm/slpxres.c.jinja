@@ -1,13 +1,17 @@
 #include "slpx.h"
+#include "freertos_mutex.h"
 
 {% for port in config.ports -%}
 slpx_t {{port.reference}};
+hal_mutex_t {{port.reference}}_tx_mutex;
 {% endfor %}
 
 void slpxs_init(void)
 {
 {% for port in config.ports -%}
-{{port.reference}}.usart = &{{port.port}};
+ {{port.reference}}.usart = &{{port.port}};
+ {{port.reference}}.tx_mutex = &{{port.reference}}_tx_mutex;
+ slpx_init(&{{port.reference}});
 {% endfor %}
 
 {% for port in config.ports -%}

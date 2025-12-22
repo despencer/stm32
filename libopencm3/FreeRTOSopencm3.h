@@ -62,7 +62,7 @@
 //#define configUSE_16_BIT_TICKS			0
 #define configTICK_TYPE_WIDTH_IN_BITS TICK_TYPE_WIDTH_32_BITS
 #define configIDLE_SHOULD_YIELD			1
-#define configUSE_MUTEXES			0
+#define configUSE_MUTEXES			1
 //#define configQUEUE_REGISTRY_SIZE		8
 #define configCHECK_FOR_STACK_OVERFLOW		0
 #define configUSE_RECURSIVE_MUTEXES		0

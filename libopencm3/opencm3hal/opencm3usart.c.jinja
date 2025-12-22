@@ -63,13 +63,13 @@ void hal_usarts_init(void)
   usart_set_parity(USART{{usart.index}}, USART_PARITY_{{usart.parity}});
   usart_set_flow_control(USART{{usart.index}}, USART_FLOWCONTROL_NONE);
   usart_enable(USART{{usart.index}});
+  {{usart.reference}}.status = USART_STATUS_NONE;
 {% if usart.tx != None -%}
   {{usart.reference}}.tx = xQueueCreateStatic({{usart.reference.upper()}}_TX_BUFLEN, sizeof(uint8_t), {{usart.reference}}_tx_buf, &{{usart.reference}}_tx_queuedata);
   xTaskCreate(hal_usart_task,"UART{{usart.reference}}",100,&{{usart.reference}},configMAX_PRIORITIES-1,NULL);
 {% endif -%}
 {% if usart.rx != None -%}
   {{usart.reference}}.rx = xQueueCreateStatic({{usart.reference.upper()}}_RX_BUFLEN, sizeof(uint8_t), {{usart.reference}}_rx_buf, &{{usart.reference}}_rx_queuedata);
-  {{usart.reference}}.rx_overflow = 0;
   usart_enable_rx_interrupt(USART{{usart.index}});
 {% endif -%}
 {% endfor %}
@@ -119,7 +119,7 @@ static void hal_usart_isr(hal_usart_t* usart)
      data = usart_recv(usart->index);
               /* if the queue is full we can do nothing except mark the shit had happen */
      if( xQueueSendFromISR(usart->rx, &data, NULL) == errQUEUE_FULL)
-          usart->rx_overflow = 1;
+          usart->status |= USART_RX_OVERFLOW;
    }
 }
 

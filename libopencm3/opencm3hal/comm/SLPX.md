@@ -47,8 +47,18 @@ The list of predefined Function ID (lower byte comes first):
 |0x0202|Close|0|The serial channel stops communication|
 |0x0302|Message|N|The string messages without ending zero|
 |0x0402|Heart Beat|4|4-byte integer with steady increments|
+|0x0502|OpenAck|0|Confirms that Open  signal was received|
 |0x0003|Command|-|**Command functions**|
 |0x0103|Reboot|0|Rebbot MCU|
 |0x0203|Bootloader|0|Switch to a bootloader mode (maybe via reboot)|
+
+# Standard Message Handling
+
+## Channel Connection and System Startup
+
+The best scenario for serial communication is that if channel hardwired between two devices. But even here the both device could not boot up
+simoultaneously. The same things is if we attach a device to a computer. One of the sides starts first. Since the serial channel is unbuffered usually,
+the `Open` message goes to nowhere. To avoid this, the receiver of `Open` message sends back `OpenAck`. The SLPX socket obtains status `Connected`
+after receiving of either `Open` or `OpenAck`. This status is cleared if `Close` message received.
 
 
