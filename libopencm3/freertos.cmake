@@ -7,6 +7,7 @@ endif()
 set(RTOS_PORTABLE_PATH ${RTOS_PATH}/portable/GCC/${RTOS_PORTABLE})
 
 target_include_directories(${EXECUTABLE} PRIVATE ${RTOS_PATH}/include)
+target_include_directories(comm PRIVATE ${RTOS_PATH}/include ${RTOS_PORTABLE_PATH})
 
 add_library(FreeRTOS STATIC
     ${RTOS_PATH}/event_groups.c

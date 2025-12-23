@@ -1,4 +1,6 @@
 #include "slpx.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
 #define SLPX_BYTE_START      0xF0    // a start byte
 #define SLPX_BYTE_ESCAPE     0xF1    // an escape byte
@@ -7,11 +9,22 @@
 
 void slpx_send_byte(slpx_t* slpx, uint8_t data);
 
-void slpx_init(slpx_t* slpx)
+static void slpx_listen(void *args)
+{
+ slpx_t* slpx;
+ slpx = (slpx_t*)args;
+ for(;;)
+  {
+   hal_usart_read(slpx->usart);
+  }
+}
+
+void slpx_init(slpx_t* slpx, const char* readername)
 {
  slpx->xor_tx = 0;
  hal_mutex_create(slpx->tx_mutex);
  slpx->status = SLPX_STATUS_NONE;
+ xTaskCreate(slpx_listen, readername, 200, slpx, configMAX_PRIORITIES-1,NULL);
 }
 
 void slpx_open(slpx_t* splx)

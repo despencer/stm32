@@ -11,10 +11,6 @@ void slpxs_init(void)
 {% for port in config.ports -%}
  {{port.reference}}.usart = &{{port.port}};
  {{port.reference}}.tx_mutex = &{{port.reference}}_tx_mutex;
- slpx_init(&{{port.reference}});
-{% endfor %}
-
-{% for port in config.ports -%}
- slpx_open(&{{port.reference}});
+ slpx_init(&{{port.reference}}, "{{port.reference}}Read");
 {% endfor %}
 }
