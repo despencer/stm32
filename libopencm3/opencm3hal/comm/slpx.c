@@ -46,6 +46,7 @@ void slpx_send_byte(slpx_t* slpx, uint8_t data)
 void slpx_send(slpx_t* slpx, uint16_t funcid, uint8_t* buf, size_t buflen)
 {
  unsigned int i;
+ hal_mutex_lock(slpx->tx_mutex);
  slpx->xor_tx = 0;
 
  hal_usart_send_byte(slpx->usart, SLPX_BYTE_START);
@@ -56,4 +57,5 @@ void slpx_send(slpx_t* slpx, uint16_t funcid, uint8_t* buf, size_t buflen)
  for(i=0; i<buflen; i++)
     slpx_send_byte(slpx, buf[i]);
  slpx_send_byte(slpx, slpx->xor_tx);
+ hal_mutex_unlock(slpx->tx_mutex);
 }
