@@ -40,7 +40,14 @@ static void slpx_listen(void *args)
        {
        case SLPX_OPEN:
             if(slpx_skip_data(slpx, buflen))
-                slpx_send(slpx, SLPX_OPEN, NULL, 0);
+                {
+                slpx->status |= SLPX_CONNECTED;
+                slpx_send(slpx, SLPX_OPEN_ACK, NULL, 0);
+                }
+            break;
+       case SLPX_OPEN_ACK:
+            if(slpx_skip_data(slpx, buflen))
+                slpx->status |= SLPX_CONNECTED;
             break;
        default:
             slpx_skip_data(slpx, buflen);

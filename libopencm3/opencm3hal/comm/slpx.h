@@ -9,6 +9,7 @@
 #define SLPX_TELEMETRY   0x02
 #define SLPX_OPEN        0x0102
 #define SLPX_HEARTBEAT   0x0402
+#define SLPX_OPEN_ACK    0x0502
 
 #define SLPX_STATUS_NONE 0
 #define SLPX_CONNECTED 0x01
