@@ -8,11 +8,15 @@
 #define SLPX_BYTE_ESC_ESC    0xF3    // a substitute for an escape byte
 
 void slpx_send_byte(slpx_t* slpx, uint8_t data);
+uint8_t slpx_read_byte(slpx_t* slpx, uint8_t data);
 
 static void slpx_listen(void *args)
 {
  slpx_t* slpx;
  slpx = (slpx_t*)args;
+
+ slpx_send(slpx, SLPX_OPEN, NULL, 0);
+
  for(;;)
   {
    hal_usart_read(slpx->usart);
@@ -25,11 +29,6 @@ void slpx_init(slpx_t* slpx, const char* readername)
  hal_mutex_create(slpx->tx_mutex);
  slpx->status = SLPX_STATUS_NONE;
  xTaskCreate(slpx_listen, readername, 200, slpx, configMAX_PRIORITIES-1,NULL);
-}
-
-void slpx_open(slpx_t* splx)
-{
- slpx_send(splx, SLPX_OPEN, NULL, 0);
 }
 
 void slpx_send_byte(slpx_t* slpx, uint8_t data)
