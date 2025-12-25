@@ -1,6 +1,7 @@
 #ifndef SLPX_H
 #define SLPX_H
 
+#include <stdbool.h>
 #include <halusart.h>
 #include <halmutex.h>
 
@@ -16,6 +17,7 @@ typedef struct slpx_s {
    hal_usart_t* usart;
    uint8_t xor_tx;
    hal_mutex_t* tx_mutex;
+   uint8_t xor_rx;
    uint8_t status;
 } slpx_t;
 
