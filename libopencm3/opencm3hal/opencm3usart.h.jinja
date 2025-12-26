@@ -10,12 +10,12 @@
 
 typedef struct hal_usart_s {
    uint32_t index;
+   uint8_t status;
 {% if config.hastx -%}
    QueueHandle_t tx;
 {% endif -%}
 {% if config.hasrx -%}
    QueueHandle_t rx;
-   uint8_t status;
 {% endif -%}
 } hal_usart_t;
 

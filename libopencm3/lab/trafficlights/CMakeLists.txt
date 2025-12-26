@@ -8,4 +8,5 @@ add_executable(${EXECUTABLE} trafficlights.c)
 target_include_directories(${EXECUTABLE} PUBLIC ${CMAKE_SOURCE_DIR})
 
 include(${CMAKE_LIBOPENCM3})
+include(${CMAKE_COMM})
 include(${CMAKE_FREERTOS})
