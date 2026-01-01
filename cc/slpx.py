@@ -1,3 +1,5 @@
+import threading
+
 # message functions
 SLPX_INFORMATION = 0x01
 SLPX_TELEMETRY   = 0x02
@@ -122,3 +124,21 @@ def read(line):
     if funcid in messages:
         return (messages[funcid])(funcid, msg)
     return Message(funcid, msg)
+
+class Reader():
+    ''' Runs in a separate thread '''
+    def __init__(self):
+        self.thread = None
+        self.keeprunning = False
+
+    def read(self, line, handler):
+        self.thread = threading.Thread(target = self.loop, args=(line, handler), daemon=True )
+        self.thread.start()
+
+    def loop(self, line, handler):
+        self.keeprunning = True
+        while self.keeprunning:
+            handler(read(line))
+
+    def stop(self):
+        self.keeprunning = False

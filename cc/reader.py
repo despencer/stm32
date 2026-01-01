@@ -14,9 +14,11 @@ def main():
 
     with channel.open(args) as port:
         with slpx.open(port) as line:
-            while True:
-                msg = slpx.read(line)
-                print(f'{datetime.datetime.now():%Y-%m-%d %H-%M-%S} {msg}')
+            reader = slpx.Reader()
+            print('Press ENTER to stop')
+            reader.read(line, lambda msg: print(f'{datetime.datetime.now():%Y-%m-%d %H-%M-%S} {msg}'))
+            input()
+            reader.stop()
 
 if __name__ == "__main__":
     main()
