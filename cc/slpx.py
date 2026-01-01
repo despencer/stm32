@@ -90,13 +90,22 @@ def open(channel):
     return SLPX(channel)
 
 class EmptyMessage:
-    messages = {SLPX_OPEN: "Serial channel is opened", SLPX_CLOSE: "Serial channel is closing"}
+    messages = {SLPX_OPEN: "Serial channel is opened", SLPX_CLOSE: "Serial channel is closing", 
+                SLPX_OPEN_ACK: "Serial channel is opened"}
     def __init__(self, funcid, data):
         self.funcid = funcid
         self.message = self.messages[self.funcid]
 
     def __repr__(self):
         return f'{self.funcid:04X} {self.message}'
+
+class HeartBeatMessage:
+    def __init__(self, funcid, data):
+        self.funcid = funcid
+        self.counter = int.from_bytes(data, 'little')
+
+    def __repr__(self):
+        return f'{self.funcid:04X} HeartBeat #{self.counter:X}'
 
 class Message:
     def __init__(self, funcid, data):
@@ -106,7 +115,7 @@ class Message:
     def __repr__(self):
         return f'{self.funcid:04X} {self.data}'
 
-messages = {SLPX_OPEN: EmptyMessage, SLPX_CLOSE:EmptyMessage}
+messages = {SLPX_OPEN: EmptyMessage, SLPX_CLOSE:EmptyMessage, SLPX_HEARTBEAT:HeartBeatMessage, SLPX_OPEN_ACK: EmptyMessage}
 
 def read(line):
     (funcid, msg) = line.read()
