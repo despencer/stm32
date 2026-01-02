@@ -5,7 +5,6 @@ import slpx
 import channel
 import datetime
 
-
 class CursesInput:
     def __init__(self, handler):
         self.history = []
@@ -34,7 +33,7 @@ class CursesInput:
                 self.ccmd.addstr(1, 2+len(line), key)
                 line += key
                 self.ccmd.refresh()
-            handler(self, line)
+            self.handler(self, line)
             self.ccmd.addstr(1, 1, '>' + ' ' * (curses.COLS-3))
             self.ccmd.move(1, 2)
         stdscr.clear()
@@ -56,8 +55,17 @@ class CursesInput:
     def stop(self):
         self.keeprunning = False
 
-def handler(shell, command):
-    shell.stop()
+class Manager:
+    def __init__(self, line):
+        self.line = line
+        self.commands = {'quit': lambda s,c: s.stop() }
+
+    def handler(self, shell, command):
+        cmdname = command.split(' ')[0]
+        if cmdname in self.commands:
+            self.commands[cmdname](shell, command)
+        else:
+            shell.addline(f"-- Unknown command '{cmdname}'. Print 'quit' for stop")
 
 def main():
     import argparse
@@ -69,7 +77,8 @@ def main():
 
     with channel.open(args) as port:
         with slpx.open(port) as line:
-            shell = CursesInput(handler)
+            manager = Manager(line)
+            shell = CursesInput(manager.handler)
             reader = slpx.Reader()
             reader.read(line, lambda msg: shell.addline(f'{datetime.datetime.now():%Y-%m-%d %H-%M-%S} {msg}'))
             shell.run()
