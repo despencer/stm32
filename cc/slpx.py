@@ -19,6 +19,7 @@ class SLPX:
         self.channel = channel
         self.xor_tx = 0
         self.xor_rx = 0
+        self.lock_tx = threading.Lock()
 
     def open(self):
         self.send(SLPX_OPEN, b'')
@@ -51,17 +52,18 @@ class SLPX:
         return data
 
     def send(self, funcid, data):
-        self.xor_tx = 0
-        buflen = len(data)
-        self.channel.send_byte(SLPX_BYTE_START)
-        self.send_byte( funcid & 0xFF )
-        self.send_byte( (funcid>>8) & 0xFF )
-        self.send_byte( buflen & 0xFF )
-        self.send_byte( (buflen>>8) & 0xFF )
-        for i in range(0, buflen):
-            self.send_byte( data[i] )
-        self.send_byte(self.xor_tx)
-        self.channel.flush()
+        with self.lock_tx:
+            self.xor_tx = 0
+            buflen = len(data)
+            self.channel.send_byte(SLPX_BYTE_START)
+            self.send_byte( funcid & 0xFF )
+            self.send_byte( (funcid>>8) & 0xFF )
+            self.send_byte( buflen & 0xFF )
+            self.send_byte( (buflen>>8) & 0xFF )
+            for i in range(0, buflen):
+                self.send_byte( data[i] )
+            self.send_byte(self.xor_tx)
+            self.channel.flush()
 
     def read(self):
         while True:
