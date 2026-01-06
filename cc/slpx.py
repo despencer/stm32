@@ -7,6 +7,7 @@ SLPX_OPEN        = 0x0102
 SLPX_CLOSE       = 0x0202
 SLPX_HEARTBEAT   = 0x0402
 SLPX_OPEN_ACK    = 0x0502
+SLPX_REBOOT      = 0x0103
 
 # protocol bytes
 SLPX_BYTE_START     = 0xF0    # a start byte

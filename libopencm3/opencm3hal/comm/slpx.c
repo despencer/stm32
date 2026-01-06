@@ -1,6 +1,7 @@
 #include "slpx.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "hal.h"
 
 #define SLPX_BYTE_START      0xF0    // a start byte
 #define SLPX_BYTE_ESCAPE     0xF1    // an escape byte
@@ -45,12 +46,16 @@ static void slpx_listen(void *args)
                 slpx_send(slpx, SLPX_OPEN_ACK, NULL, 0);
                 }
             break;
-       case SLPX_OPEN_ACK:
-            if(slpx_skip_data(slpx, buflen))
-                slpx->status |= SLPX_CONNECTED;
-            break;
        default:
-            slpx_skip_data(slpx, buflen);
+            if(slpx_skip_data(slpx, buflen))
+               {
+               switch(funcid)
+                  {
+                  case SLPX_OPEN_ACK:  slpx->status |= SLPX_CONNECTED; break;
+                  case SLPX_CLOSE:     slpx->status &= ~(SLPX_CONNECTED); break;
+                  case SLPX_REBOOT:    hal_system_reboot(); break;
+                  }
+               }
             break;
        }
   }

@@ -58,7 +58,7 @@ class CursesInput:
 class Manager:
     def __init__(self, line):
         self.line = line
-        self.commands = {'quit': lambda s,c: s.stop() }
+        self.commands = {'quit': lambda s,c: s.stop(), 'reset': self.reset}
 
     def handler(self, shell, command):
         cmdname = command.split(' ')[0]
@@ -66,6 +66,10 @@ class Manager:
             self.commands[cmdname](shell, command)
         else:
             shell.addline(f"-- Unknown command '{cmdname}'. Print 'quit' for stop")
+
+    def reset(self, shell, command):
+        shell.addline('-- Sending REBOOT command')
+        self.line.send(slpx.SLPX_REBOOT, b'')
 
 def main():
     import argparse

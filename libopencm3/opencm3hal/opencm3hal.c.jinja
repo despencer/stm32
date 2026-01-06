@@ -5,7 +5,7 @@
 
 void hal_setup_clock(void);
 
-void hal_init(void)
+void hal_system_init(void)
 {
  hal_setup_clock();
 {% for mapper in config.mappers -%}
@@ -18,7 +18,7 @@ void hal_setup_clock(void)
  {{ options.hal.clock }}
 }
 
-void hal_reset(void)
+void hal_system_reboot(void)
 {
  scb_reset_system();
 }

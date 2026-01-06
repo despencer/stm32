@@ -1,14 +1,13 @@
 #ifndef OPENCM3_HAL_H
 #define OPENCM3_HAL_H
 
+#include "hal.h"
+
 {% for res in options.hal.resheaders -%}
 #include "{{res}}"
 {% endfor %}
 
-void hal_init(void);
-void hal_reset(void);
 void hal_jump_to_bootloader(void);
-
 uint32_t hal_read_backup_register(uint8_t no);
 void hal_write_backup_register(uint8_t no, uint32_t value);
 

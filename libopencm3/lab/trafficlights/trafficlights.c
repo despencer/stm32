@@ -30,7 +30,7 @@ static void maintask(void *args __attribute((unused)))
 
 int main(void)
 {
-   hal_init();
+   hal_system_init();
 
     xTaskCreate(maintask, "MAIN", 200, NULL, configMAX_PRIORITIES-1,NULL);
     vTaskStartScheduler();

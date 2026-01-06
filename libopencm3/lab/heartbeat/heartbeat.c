@@ -22,7 +22,7 @@ static void heartbeat(void *args __attribute((unused)))
 
 int main(void)
 {
-   hal_init();
+   hal_system_init();
 
    xTaskCreate(heartbeat, "HeartBeat", 200, NULL, configMAX_PRIORITIES-1,NULL);
    vTaskStartScheduler();
