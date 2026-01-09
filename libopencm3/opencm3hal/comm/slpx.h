@@ -27,7 +27,9 @@ typedef struct slpx_s {
 
 
 void slpxs_init(void);
+void slpxs_shutdown(void);
 void slpx_init(slpx_t* slpx, const char* readername);
+void slpx_close(slpx_t* slpx);
 
 void slpx_send(slpx_t* slpx, uint16_t funcid, uint8_t* buf, size_t buflen);
 

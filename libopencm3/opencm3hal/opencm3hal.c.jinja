@@ -13,6 +13,15 @@ void hal_system_init(void)
 {% endfor %}
 }
 
+void hal_system_shutdown(void)
+{
+{% for mapper in config.mappers -%}
+{% if mapper.has_shutdown -%}
+ {{mapper.prefix}}{{mapper.name}}s_shutdown();
+{% endif -%}
+{% endfor %}
+}
+
 void hal_setup_clock(void)
 {
  {{ options.hal.clock }}
@@ -20,6 +29,8 @@ void hal_setup_clock(void)
 
 void hal_system_reboot(void)
 {
+ hal_system_shutdown();
+ vTaskDelay(500 / portTICK_PERIOD_MS);
  scb_reset_system();
 }
 

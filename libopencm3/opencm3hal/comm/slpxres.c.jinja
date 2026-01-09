@@ -14,3 +14,10 @@ void slpxs_init(void)
  slpx_init(&{{port.reference}}, "{{port.reference}}Read");
 {% endfor %}
 }
+
+void slpxs_shutdown(void)
+{
+{% for port in config.ports -%}
+ slpx_close(&{{port.reference}});
+{% endfor %}
+}

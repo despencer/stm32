@@ -11,6 +11,7 @@ class Mapper:
         self.prefix = ''
         self.templates = [ "comm/slpxres.c", "comm/slpxres.h" ]
         self.ports = []
+        self.has_shutdown = True
 
     def addconfig(self, jmap, board):
         p = SLPX()

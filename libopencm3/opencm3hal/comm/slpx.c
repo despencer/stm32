@@ -69,6 +69,12 @@ void slpx_init(slpx_t* slpx, const char* readername)
  xTaskCreate(slpx_listen, readername, 200, slpx, configMAX_PRIORITIES-1,NULL);
 }
 
+void slpx_close(slpx_t* slpx)
+{
+ slpx->status = SLPX_STATUS_NONE;
+ slpx_send(slpx, SLPX_CLOSE, NULL, 0);
+}
+
 uint8_t slpx_read_byte(slpx_t* slpx)
 {
  uint8_t data;
