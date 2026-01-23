@@ -57,8 +57,14 @@ class Serial:
     def close(self):
         self.serial.close()
 
+    def send(self, data):
+        self.serial.write(data)
+
     def send_byte(self, data):
         self.serial.write(data.to_bytes(1, 'little'))
+
+    def rx_waiting_bytes(self):
+        return self.serial.in_waiting
 
     def read_byte(self):
         buf = self.serial.read(1)

@@ -11,7 +11,6 @@ static void heartbeat(void *args __attribute((unused)))
  uint32_t value = 232;
  for (;;)
    {
-   if (cmdcnt.status & SLPX_CONNECTED)
       {
       slpx_send(&cmdcnt, SLPX_HEARTBEAT, (uint8_t*)&value, 4);
       value++;

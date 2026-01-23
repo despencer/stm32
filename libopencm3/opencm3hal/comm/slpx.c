@@ -11,13 +11,16 @@
 void slpx_send_byte(slpx_t* slpx, uint8_t data);
 uint8_t slpx_read_byte(slpx_t* slpx);
 bool slpx_skip_data(slpx_t* slpx, uint16_t buflen);
+void slpx_set_status(slpx_t* slpx, uint16_t bits);
+void slpx_clear_status(slpx_t* slpx, uint16_t bits);
 
 static void slpx_listen(void *args)
 {
  slpx_t* slpx;
  slpx = (slpx_t*)args;
 
- slpx_send(slpx, SLPX_OPEN, NULL, 0);
+ slpx_send(slpx, SLPX_START, NULL, 0);
+ slpx_set_status(slpx, SLPX_STATUS_TX_ON);
 
  for(;;)
   {
@@ -39,21 +42,13 @@ static void slpx_listen(void *args)
 
      switch(funcid)
        {
-       case SLPX_OPEN:
-            if(slpx_skip_data(slpx, buflen))
-                {
-                slpx->status |= SLPX_CONNECTED;
-                slpx_send(slpx, SLPX_OPEN_ACK, NULL, 0);
-                }
-            break;
        default:
             if(slpx_skip_data(slpx, buflen))
                {
                switch(funcid)
                   {
-                  case SLPX_OPEN_ACK:  slpx->status |= SLPX_CONNECTED; break;
-                  case SLPX_CLOSE:     slpx->status &= ~(SLPX_CONNECTED); break;
-                  case SLPX_REBOOT:    hal_system_reboot(); break;
+                  case SLPX_REBOOT:     hal_system_reboot(); break;
+                  case SLPX_BOOTLOADER: hal_system_bootloader(); break;
                   }
                }
             break;
@@ -71,8 +66,8 @@ void slpx_init(slpx_t* slpx, const char* readername)
 
 void slpx_close(slpx_t* slpx)
 {
- slpx->status = SLPX_STATUS_NONE;
- slpx_send(slpx, SLPX_CLOSE, NULL, 0);
+ slpx_clear_status(slpx, SLPX_STATUS_TX_ON);
+ slpx_send(slpx, SLPX_SHUTDOWN, NULL, 0);
 }
 
 uint8_t slpx_read_byte(slpx_t* slpx)
@@ -119,19 +114,36 @@ void slpx_send_byte(slpx_t* slpx, uint8_t data)
  slpx->xor_tx ^= data;
 }
 
+void slpx_set_status(slpx_t* slpx, uint16_t bits)
+{
+ hal_mutex_lock(slpx->tx_mutex);
+ slpx->status |= bits;
+ hal_mutex_unlock(slpx->tx_mutex);
+}
+
+void slpx_clear_status(slpx_t* slpx, uint16_t bits)
+{
+ hal_mutex_lock(slpx->tx_mutex);
+ slpx->status &= ~bits;
+ hal_mutex_unlock(slpx->tx_mutex);
+}
+
 void slpx_send(slpx_t* slpx, uint16_t funcid, uint8_t* buf, size_t buflen)
 {
  unsigned int i;
  hal_mutex_lock(slpx->tx_mutex);
- slpx->xor_tx = 0;
+ if((slpx->status & SLPX_STATUS_TX_ON) || funcid == SLPX_SHUTDOWN)
+   {
+   slpx->xor_tx = 0;
 
- hal_usart_send_byte(slpx->usart, SLPX_BYTE_START);
- slpx_send_byte(slpx, (uint8_t)(funcid&0xFF) );
- slpx_send_byte(slpx, (uint8_t)((funcid>>8)&0xFF) );
- slpx_send_byte(slpx, (uint8_t)(buflen&0xFF) );
- slpx_send_byte(slpx, (uint8_t)((buflen>>8)&0xFF) );
- for(i=0; i<buflen; i++)
-    slpx_send_byte(slpx, buf[i]);
- slpx_send_byte(slpx, slpx->xor_tx);
+   hal_usart_send_byte(slpx->usart, SLPX_BYTE_START);
+   slpx_send_byte(slpx, (uint8_t)(funcid&0xFF) );
+   slpx_send_byte(slpx, (uint8_t)((funcid>>8)&0xFF) );
+   slpx_send_byte(slpx, (uint8_t)(buflen&0xFF) );
+   slpx_send_byte(slpx, (uint8_t)((buflen>>8)&0xFF) );
+   for(i=0; i<buflen; i++)
+      slpx_send_byte(slpx, buf[i]);
+   slpx_send_byte(slpx, slpx->xor_tx);
+   }
  hal_mutex_unlock(slpx->tx_mutex);
 }

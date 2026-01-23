@@ -2,14 +2,15 @@
 import threading
 import curses
 import slpx
+import sbup
 import channel
 import datetime
 
 class CursesInput:
-    def __init__(self, handler):
+    def __init__(self):
         self.history = []
         self.keeprunning = False
-        self.handler = handler
+        self.handler = None
         self.lock = threading.Lock()
 
     def open(self):
@@ -55,10 +56,36 @@ class CursesInput:
     def stop(self):
         self.keeprunning = False
 
+class Bootloader:
+    def __init__(self, line, shell, manager):
+        self.line = sbup.open(line.channel)
+        self.shell = shell
+        self.manager = manager
+        self.commands = {'quit': lambda s,c: s.stop() }
+
+    def start(self):
+        self.shell.addline('-B Start bootloader mode')
+        self.shell.handler = self.handler
+        if self.line.start():
+            self.shell.addline('-B bootloader mode confirmed')
+        else:
+            self.shell.addline('-B bootloader mode NOT confirmed')
+
+    def handler(self, shell, command):
+        cmdname = command.split(' ')[0]
+        if cmdname in self.commands:
+            self.commands[cmdname](shell, command)
+        else:
+            shell.addline(f"-B Unknown command '{cmdname}'. Print 'quit' for stop")
+
 class Manager:
-    def __init__(self, line):
+    def __init__(self, line, shell):
         self.line = line
-        self.commands = {'quit': lambda s,c: s.stop(), 'reset': self.reset}
+        self.shell = shell
+        self.reader = slpx.Reader()
+        self.commands = {'quit': lambda s,c: s.stop(), 'reset': self.reset, 'bootloader': self.bootloader}
+        self.onshutdown = self.start
+        self.bootloader = None
 
     def handler(self, shell, command):
         cmdname = command.split(' ')[0]
@@ -67,9 +94,28 @@ class Manager:
         else:
             shell.addline(f"-- Unknown command '{cmdname}'. Print 'quit' for stop")
 
+    def msghandler(self, msg):
+        self.shell.addline(f'{datetime.datetime.now():%Y-%m-%d %H-%M-%S} {msg}')
+        if msg.funcid == slpx.SLPX_SHUTDOWN:
+            self.onshutdown()
+
+    def start(self):
+        self.shell.addline('-- Start system mode')
+        self.shell.handler = self.handler
+        self.reader.read(self.line, self.msghandler)
+
+    def startbl(self):
+        self.onshutdown = self.start
+        self.bootloader.start()
+
     def reset(self, shell, command):
-        shell.addline('-- Sending REBOOT command')
+        self.shell.addline('-- Sending REBOOT command')
         self.line.send(slpx.SLPX_REBOOT, b'')
+
+    def bootloader(self, shell, command):
+        self.shell.addline('-- Sending BOOTLOADER command')
+        self.onshutdown = self.startbl
+        self.line.send(slpx.SLPX_BOOTLOADER, b'')
 
 def main():
     import argparse
@@ -81,10 +127,10 @@ def main():
 
     with channel.open(args) as port:
         with slpx.open(port) as line:
-            manager = Manager(line)
-            shell = CursesInput(manager.handler)
-            reader = slpx.Reader()
-            reader.read(line, lambda msg: shell.addline(f'{datetime.datetime.now():%Y-%m-%d %H-%M-%S} {msg}'))
+            shell = CursesInput()
+            manager = Manager(line, shell)
+            manager.bootloader = Bootloader(line, shell, manager)
+            manager.start()
             shell.run()
 
 if __name__ == "__main__":

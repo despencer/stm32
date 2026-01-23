@@ -3,10 +3,23 @@
 #include <libopencm3/cm3/scb.h>
 #include <libopencm3/stm32/rtc.h>
 
+#define HAL_BR_SYSTEM  0
+#define HAL_BR_BOOTLOADER  1
+
 void hal_setup_clock(void);
+
+void hal_system_start(void)
+{
+ if( (hal_read_backup_register(HAL_BR_SYSTEM) & HAL_BR_BOOTLOADER) != 0)
+      {
+      hal_write_backup_register(HAL_BR_SYSTEM, 0);
+      hal_jump_to_bootloader();
+      }
+}
 
 void hal_system_init(void)
 {
+ hal_system_start();
  hal_setup_clock();
 {% for mapper in config.mappers -%}
  {{mapper.prefix}}{{mapper.name}}s_init();
@@ -20,6 +33,14 @@ void hal_system_shutdown(void)
  {{mapper.prefix}}{{mapper.name}}s_shutdown();
 {% endif -%}
 {% endfor %}
+}
+
+void hal_system_bootloader(void)
+{
+ hal_system_shutdown();
+ vTaskDelay(500 / portTICK_PERIOD_MS);
+ hal_write_backup_register(HAL_BR_SYSTEM, HAL_BR_BOOTLOADER);
+ scb_reset_system();
 }
 
 void hal_setup_clock(void)

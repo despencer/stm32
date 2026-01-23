@@ -3,11 +3,11 @@ import threading
 # message functions
 SLPX_INFORMATION = 0x01
 SLPX_TELEMETRY   = 0x02
-SLPX_OPEN        = 0x0102
-SLPX_CLOSE       = 0x0202
+SLPX_START       = 0x0102
+SLPX_SHUTDOWN    = 0x0202
 SLPX_HEARTBEAT   = 0x0402
-SLPX_OPEN_ACK    = 0x0502
 SLPX_REBOOT      = 0x0103
+SLPX_BOOTLOADER  = 0x0203
 
 # protocol bytes
 SLPX_BYTE_START     = 0xF0    # a start byte
@@ -23,10 +23,10 @@ class SLPX:
         self.lock_tx = threading.Lock()
 
     def open(self):
-        self.send(SLPX_OPEN, b'')
+        self.send(SLPX_START, b'')
 
     def close(self):
-        self.send(SLPX_CLOSE, b'')
+        self.send(SLPX_SHUTDOWN, b'')
 
     def send_byte(self, data):
         if data == SLPX_BYTE_START:
@@ -80,8 +80,6 @@ class SLPX:
                 data.append( self.read_byte() )
             self.read_byte()
             if self.xor_rx == 0:
-                if funcid == SLPX_OPEN:
-                    self.send(SLPX_OPEN_ACK, b'')
                 return (funcid, bytes(data) )
 
     def __enter__(self):
@@ -95,8 +93,7 @@ def open(channel):
     return SLPX(channel)
 
 class EmptyMessage:
-    messages = {SLPX_OPEN: "Serial channel is opened", SLPX_CLOSE: "Serial channel is closing", 
-                SLPX_OPEN_ACK: "Serial channel is opened"}
+    messages = {SLPX_START: "The firmare has started", SLPX_SHUTDOWN: "The firmware is going down"}
     def __init__(self, funcid, data):
         self.funcid = funcid
         self.message = self.messages[self.funcid]
@@ -120,7 +117,7 @@ class Message:
     def __repr__(self):
         return f'{self.funcid:04X} {self.data}'
 
-messages = {SLPX_OPEN: EmptyMessage, SLPX_CLOSE:EmptyMessage, SLPX_HEARTBEAT:HeartBeatMessage, SLPX_OPEN_ACK: EmptyMessage}
+messages = {SLPX_START: EmptyMessage, SLPX_SHUTDOWN:EmptyMessage, SLPX_HEARTBEAT:HeartBeatMessage}
 
 def read(line):
     (funcid, msg) = line.read()
@@ -141,7 +138,10 @@ class Reader():
     def loop(self, line, handler):
         self.keeprunning = True
         while self.keeprunning:
-            handler(read(line))
+            msg = read(line)
+            handler(msg)
+            if msg.funcid == SLPX_SHUTDOWN:
+                return
 
     def stop(self):
         self.keeprunning = False

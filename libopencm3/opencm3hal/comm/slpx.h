@@ -7,22 +7,22 @@
 
 #define SLPX_INFORMATION 0x01
 #define SLPX_TELEMETRY   0x02
-#define SLPX_OPEN        0x0102
-#define SLPX_CLOSE       0x0202
+#define SLPX_START       0x0102
+#define SLPX_SHUTDOWN    0x0202
 #define SLPX_HEARTBEAT   0x0402
-#define SLPX_OPEN_ACK    0x0502
 #define SLPX_COMMAND     0x03
 #define SLPX_REBOOT      0x0103
+#define SLPX_BOOTLOADER  0x0203
 
-#define SLPX_STATUS_NONE 0
-#define SLPX_CONNECTED 0x01
+#define SLPX_STATUS_NONE   0
+#define SLPX_STATUS_TX_ON  1
 
 typedef struct slpx_s {
    hal_usart_t* usart;
    uint8_t xor_tx;
    hal_mutex_t* tx_mutex;
    uint8_t xor_rx;
-   uint8_t status;
+   uint16_t status;
 } slpx_t;
 
 
