@@ -58,18 +58,28 @@ class Serial:
         self.serial.close()
 
     def send(self, data):
+#        print(f'Writing {data}')
         self.serial.write(data)
 
     def send_byte(self, data):
+#        print(f'Writing byte {data:02X}')
         self.serial.write(data.to_bytes(1, 'little'))
 
     def rx_waiting_bytes(self):
         return self.serial.in_waiting
 
+    def read(self, size):
+        buf = self.serial.read(size)
+        if len(buf) == 0:
+            raise Exception("Serial port is broken")
+#        print(f'Read data {buf} for {size} get {len(buf)}')
+        return buf
+
     def read_byte(self):
         buf = self.serial.read(1)
         if len(buf) == 0:
             raise Exception("Serial port is broken")
+#        print(f'Read byte {buf[0]:02X}')
         return buf[0]
 
     def flush(self):

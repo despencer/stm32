@@ -61,7 +61,7 @@ class Bootloader:
         self.line = sbup.open(line.channel)
         self.shell = shell
         self.manager = manager
-        self.commands = {'quit': lambda s,c: s.stop() }
+        self.commands = {'quit': lambda s,c: s.stop(), 'id': self.getid }
 
     def start(self):
         self.shell.addline('-B Start bootloader mode')
@@ -77,6 +77,16 @@ class Bootloader:
             self.commands[cmdname](shell, command)
         else:
             shell.addline(f"-B Unknown command '{cmdname}'. Print 'quit' for stop")
+
+    def getid(self, shell, command):
+        if not self.line.send_command(sbup.SBUP_CMD_GETID):
+            shell.addline('-B No ACK for ID command')
+            return
+        data = self.line.read_data()
+        if data == None:
+            shell.addline('-B No data receiver for ID command')
+            return
+        shell.addline(f"{datetime.datetime.now():%Y-%m-%d %H-%M-%S}-B: ID {int.from_bytes(data, 'little'):X}")
 
 class Manager:
     def __init__(self, line, shell):
@@ -103,9 +113,11 @@ class Manager:
         self.shell.addline('-- Start system mode')
         self.shell.handler = self.handler
         self.reader.read(self.line, self.msghandler)
+        self.line.open()
 
     def startbl(self):
         self.onshutdown = self.start
+        self.line.close()
         self.bootloader.start()
 
     def reset(self, shell, command):
@@ -126,12 +138,12 @@ def main():
     args = parser.parse_args()
 
     with channel.open(args) as port:
-        with slpx.open(port) as line:
-            shell = CursesInput()
-            manager = Manager(line, shell)
-            manager.bootloader = Bootloader(line, shell, manager)
-            manager.start()
-            shell.run()
+        line = slpx.open(port)
+        shell = CursesInput()
+        manager = Manager(line, shell)
+        manager.bootloader = Bootloader(line, shell, manager)
+        manager.start()
+        shell.run()
 
 if __name__ == "__main__":
     main()
