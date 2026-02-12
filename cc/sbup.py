@@ -1,4 +1,6 @@
 import time
+import functools
+import operator
 
 SBUP_START = 0x7F
 SBUP_ACK = 0x79
@@ -6,6 +8,7 @@ SBUP_CHECKSUM = 0xFF
 
 SBUP_CMD_GET = 0x00
 SBUP_CMD_GETID = 0x02
+SBUP_CMD_READMEMORY = 0x11
 
 class SBUP:
     def __init__(self, channel):
@@ -27,6 +30,9 @@ class SBUP:
                 time.sleep(0.2)
         return False
 
+    def read(self, size):
+        return self.channel.read(size)
+
     def read_data(self):
         size = self.channel.read_byte() + 1
         data = self.channel.read(size)
@@ -38,6 +44,14 @@ class SBUP:
         self.channel.send_byte(cmdid)
         self.channel.send_byte(cmdid ^ SBUP_CHECKSUM)
         return self.check_ack()
+
+    def send_data(self, data):
+        self.channel.send(data)
+        self.channel.send_byte( functools.reduce(operator.xor, data) )
+        return self.check_ack()
+
+    def send_byte(self, data):
+        self.channel.send(data)
 
     def close(self):
         pass
