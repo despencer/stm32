@@ -39,5 +39,39 @@ The host sends 1-byte of desired size minus - 1 (e.g 1 for 2 bytes, 9 for ten by
 
 The devices replies with `ACK` and sends the payload without acknowledgement at the end.
 
+## 0x31 Write Memory
 
+The host sends `0x31` with checksum (`0x31 0xCE`).
 
+The devices replies with `ACK` and waits for an address to write.
+
+The host sends 4-byte address in big-endian format (MSB first, LSB last), followed by checksum (XOR for 4-bytes).
+
+The devices replies with `ACK` and waits for a payload to write.
+
+The host sends 1-byte of desired size minus - 1 (e.g 1 for 2 bytes, 9 for ten bytes, etc), then payload of N bytes, followed by checksum.
+
+The device erases memory and replies with `ACK`.
+
+## 0x43: Erase Memory
+
+The host sends `0x43` with checksum (`0x43 0xBC`).
+
+The devices replies with `ACK` and waits for a number of pages to be erased.
+
+The host sends 1-byte of page count minus - 1 (e.g 1 for 2 pages, 9 for ten pages, etc). The 255 value is reserved for the global erase.
+Then host sends a payload with one-byte page numbers, followed by check sum.
+
+The device erases memory and replies with `ACK`.
+
+## 0x44 Extended Erase Memory
+
+The host sends `0x44` with checksum (`0x43 0xBB`).
+
+The devices replies with `ACK` and waits for a number of pages to be erased.
+
+The host sends two bytes of page count minus - 1 (e.g 1 for 2 pages, 9 for ten pages, etc) in big-endian format (MSB first, LSB last). The values
+0xFFFX are reserved for mass erase.
+Then host sends a payload with two byte page numbers, again in big-endian format (MSB first, LSB last), followed by check sum.
+
+The device erases memory and replies with `ACK`.
