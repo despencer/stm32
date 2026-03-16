@@ -1,16 +1,22 @@
 import slpx
 import sbup
 
-def enter_bootloader(line):
-    print('Sending request to reset to bootloader mode')
-    line.send(slpx.SLPX_BOOTLOADER, b'')
-    while True:
-        msg = slpx.read(line)
-        if msg.funcid == slpx.SLPX_SHUTDOWN:
-            line.close()
-            print('Jumping to bootloader mode')
-            break
-    bline = sbup.open(line.channel)
+def get_bootloader(channel, bl_already):
+    if not bl_already:
+        line = slpx.open(channel)
+        line.open()
+        print('Sending request to reset to bootloader mode')
+        line.send(slpx.SLPX_BOOTLOADER, b'')
+        while True:
+            msg = slpx.read(line)
+            if msg.funcid == slpx.SLPX_SHUTDOWN:
+                line.close()
+                print('Jumping to bootloader mode')
+                break
+    return open_bootloader(channel)
+
+def open_bootloader(channel):
+    bline = sbup.open(channel)
     if not bline.start():
         print('Bootloader mode rejected')
         return None
