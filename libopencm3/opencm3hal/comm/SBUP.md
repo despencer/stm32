@@ -39,6 +39,16 @@ The host sends 1-byte of desired size minus - 1 (e.g 1 for 2 bytes, 9 for ten by
 
 The devices replies with `ACK` and sends the payload without acknowledgement at the end.
 
+## 0x21: Go
+
+The host sends `0x21` with checksum (`0x21 0xDE`).
+
+The devices replies with `ACK` and waits for an address to jump to.
+
+The host sends 4-byte address in big-endian format (MSB first, LSB last), followed by checksum (XOR for 4-bytes).
+
+The devices replies with `ACK` and jumps to the address.
+
 ## 0x31 Write Memory
 
 The host sends `0x31` with checksum (`0x31 0xCE`).

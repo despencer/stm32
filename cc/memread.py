@@ -13,21 +13,16 @@ def read_memory(line, filename, start, size):
         return
     with open(filename, 'wb') as target:
         while size > 0:
-            chunk = min(size, 256) - 1
-            if not bline.send_command(sbup.SBUP_CMD_READMEMORY):
-                print('Failed to execute Read Memory command')
+            chunk = min(size, 256)
+            data = control.read_chunk(bline, start, chunk)
+            if data == None:
                 return
-            if not bline.send_data(start.to_bytes(4, 'big')):
-                print('Failed to send address')
-                return
-            if not bline.send_command(chunk):
-                print('Failed to send size')
-                return
-            target.write(bline.read(chunk+1))
-            size -= chunk+1
-            print(f'Read {chunk+1} bytes at {start:X}, left {size} bytes')
-            start += chunk+1
+            target.write(data)
+            size -= chunk
+            print(f'Read {chunk} bytes at {start:X}, left {size} bytes')
+            start += chunk
     print('All data was read successfully')
+    control.exit_bootloader(bline)
 
 def main():
     import argparse

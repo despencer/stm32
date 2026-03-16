@@ -19,8 +19,8 @@ void hal_system_start(void)
 
 void hal_system_init(void)
 {
- hal_system_start();
  hal_setup_clock();
+ hal_system_start();
 {% for mapper in config.mappers -%}
  {{mapper.prefix}}{{mapper.name}}s_init();
 {% endfor %}
