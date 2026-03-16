@@ -64,11 +64,8 @@ def erase_memory(bline, mcu, start, size, extended=False):
         return False
     return True
 
-def write_memory(line, mcu, filename, start):
+def write_memory(bline, mcu, filename, start):
     size = os.path.getsize(filename)
-    bline = control.enter_bootloader(line)
-    if bline == None:
-        return
     if not erase_memory(bline, mcu, start, size, extended=True):
         return
     with open(filename, 'rb') as source:
@@ -89,12 +86,14 @@ def write_memory(line, mcu, filename, start):
             print(f'Write {chunk+1} bytes at {start:X}, left {size} bytes')
             start += chunk+1
     print('All data was written successfully')
+    control.exit_bootloader(bline)
 
 def main():
     import argparse
 
     parser = argparse.ArgumentParser(description="Writes a file to a chip memory")
     parser.add_argument("--chtype", default='serial', help="Channel type (*serial, pipe)", required=False)
+    parser.add_argument("--bootloader", action='store_true', help="MCU is already in bootload mode")
     parser.add_argument("channel", type=str, help="Channel name")
     parser.add_argument("mcu", type=str, help="MCU definition")
     parser.add_argument("start", type=str, help="Start address")
@@ -102,9 +101,10 @@ def main():
     args = parser.parse_args()
 
     with channel.open(args) as port:
-        line = slpx.open(port)
-        line.open()
-        write_memory(line, args.mcu, args.filename, eval(args.start) )
+        bline = control.get_bootloader(port, args.bootloader)
+        if bline == None:
+            return
+        write_memory(bline, args.mcu, args.filename, eval(args.start) )
 
 if __name__ == "__main__":
     main()
